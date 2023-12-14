@@ -386,6 +386,15 @@ public final class Admin {
         return message;
     }
 
+    public Song getSong(Song song) {
+        for (Song song1 : songs) {
+            if (song1.equals(song))
+                return song1;
+        }
+
+        return null;
+    }
+
     /**
      * Reset.
      */

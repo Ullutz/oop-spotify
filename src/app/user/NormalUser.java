@@ -269,7 +269,8 @@ public class NormalUser extends User {
             return "Please load a source before liking or unliking.";
         }
 
-        if (!player.getType().equals("song") && !player.getType().equals("playlist")) {
+        if (!player.getType().equals("song") && !player.getType().equals("playlist")
+        && !player.getType().equals("album")) {
             return "Loaded source is not a song.";
         }
 
@@ -278,16 +279,19 @@ public class NormalUser extends User {
         }
 
         Song song = (Song) player.getCurrentAudioFile();
+        Song songEntry = Admin.getInstance().getSong(song);
 
         if (likedSongs.contains(song)) {
             likedSongs.remove(song);
             song.dislike();
+            songEntry.setLikes(song.getLikes());
 
             return "Unlike registered successfully.";
         }
 
         likedSongs.add(song);
         song.like();
+        songEntry.setLikes(song.getLikes());
         return "Like registered successfully.";
     }
 

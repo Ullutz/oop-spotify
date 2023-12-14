@@ -6,6 +6,7 @@ import app.user.NormalUser;
 import app.user.User;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class HomePage implements Page {
@@ -41,13 +42,32 @@ public class HomePage implements Page {
     @Override
     public void updatePage(User user) {
         first5LikedSongs.clear();
+        List<Song> sortedList = new ArrayList<>(user.getLikedSongs());
+        sortedList.sort(new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return o2.getLikes() - o1.getLikes();
+            }
+        });
         for (int i = 0; i < MAX && i < user.getLikedSongs().size(); i++) {
-            first5LikedSongs.add(user.getLikedSongs().get(i));
+            first5LikedSongs.add(sortedList.get(i));
         }
 
         top5LikedPlaylists.clear();
+
+        List<Playlist> sortedPlaylists = new ArrayList<>(user.getFollowedPlaylists());
+
+        sortedPlaylists.sort(new Comparator<Playlist>() {
+            @Override
+            public int compare(Playlist o1, Playlist o2) {
+                int a = o1.calculateTotalLikes();
+                int b = o2.calculateTotalLikes();
+
+                return b - a;
+            }
+        });
         for (int i = 0; i < MAX && i < user.getFollowedPlaylists().size(); i++) {
-            top5LikedPlaylists.add(user.getFollowedPlaylists().get(i));
+            top5LikedPlaylists.add(sortedPlaylists.get(i));
         }
     }
 
