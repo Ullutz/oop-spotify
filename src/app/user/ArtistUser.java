@@ -104,6 +104,9 @@ public class ArtistUser extends User {
         }
 
         albums.remove(album);
+        for (Song song : album.getSongs()) {
+            Admin.getInstance().getSongs().remove(song);
+        }
 
         return getUsername() + " deleted the album successfully.";
     }
