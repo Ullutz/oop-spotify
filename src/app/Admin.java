@@ -256,6 +256,26 @@ public final class Admin {
         return result;
     }
 
+    public List<String> getTop5Albums() {
+        List<Album> sortedAlbums = new ArrayList<>(getAlbums());
+        for (Album album : sortedAlbums) {
+            album.calculateTotalLikes();
+        }
+        sortedAlbums.sort(Comparator.comparingInt(Album::getTotalLikes)
+                .reversed()
+                .thenComparing(Album::getName, Comparator.naturalOrder()));
+        List<String> topAlbums = new ArrayList<>();
+        int count = 0;
+        for (Playlist playlist : sortedAlbums) {
+            if (count >= LIMIT) {
+                break;
+            }
+            topAlbums.add(playlist.getName());
+            count++;
+        }
+        return topAlbums;
+    }
+
     /**
      * Gets all the online users
      *

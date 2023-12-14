@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 
 public class Album extends Playlist {
+    private int totalLikes;
     private String description;
     private int releaseYear;
 
@@ -25,6 +26,15 @@ public class Album extends Playlist {
     }
 
     @Override
+    public Integer calculateTotalLikes() {
+        totalLikes = 0;
+        for (Song song : getSongs())
+            totalLikes += song.getLikes();
+
+        return totalLikes;
+    }
+
+    @Override
     public boolean matchesDescription(String description) {
         return this.description.startsWith(description);
     }
@@ -37,5 +47,13 @@ public class Album extends Playlist {
     @Override
     public ArrayList<Song> getSongs() {
         return super.getSongs();
+    }
+
+    public int getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(int totalLikes) {
+        this.totalLikes = totalLikes;
     }
 }

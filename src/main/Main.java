@@ -159,6 +159,8 @@ public final class Main {
                     outputs.add(new RemovePodcastCommand().execute(command));
                 case "getTop5Artists" ->
                     outputs.add(new GetTop5ArtistsCommand().execute(command));
+                case "getTop5Albums" ->
+                    outputs.add(new GetTop5AlbumsCommand().execute(command));
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
