@@ -580,8 +580,11 @@ public class NormalUser extends User {
             for (int i = 0; i < Admin.getInstance().getNoNormalUsers(); i++) {
                 User user = Admin.getInstance().getUsers().get(i);
                 Player player = user.getPlayer();
-                if (playlist.equals(player.getSource().getAudioCollection())) {
-                    return getUsername() + " can't be deleted.";
+
+                if (player.getSource() != null) {
+                    if (playlist.equals(player.getSource().getAudioCollection())) {
+                        return getUsername() + " can't be deleted.";
+                    }
                 }
             }
         }

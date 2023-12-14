@@ -68,8 +68,10 @@ public class HostUser extends User {
             Player player = ((NormalUser) Admin.getInstance().
                     getUsers().get(i)).getPlayer();
 
-            if (player.getSource().getAudioCollection().equals(podcast))
-                return getUsername() + " can't delete this podcast.";
+            if (player.getSource() != null) {
+                if (player.getSource().getAudioCollection().equals(podcast))
+                    return getUsername() + " can't delete this podcast.";
+            }
         }
 
         podcasts.remove(podcast);
@@ -115,8 +117,10 @@ public class HostUser extends User {
                 User user = Admin.getInstance().getUsers().get(i);
                 Player player = user.getPlayer();
 
-                if (podcast.equals(player.getSource().getAudioCollection())) {
-                    return getUsername() + " can't be deleted.";
+                if (player.getSource() != null) {
+                    if (podcast.equals(player.getSource().getAudioCollection())) {
+                        return getUsername() + " can't be deleted.";
+                    }
                 }
             }
         }
@@ -126,7 +130,7 @@ public class HostUser extends User {
             int indexOfPage = user.getIndexOfCurrentPage();
 
             if (indexOfPage == 3) {
-                if (pages[3].getOwner().equals(getUsername())) {
+                if (user.getPages()[3].getOwner().equals(getUsername())) {
                     return getUsername() + " can't be deleted.";
                 }
             }
