@@ -231,6 +231,31 @@ public final class Admin {
         return topPlaylists;
     }
 
+    public List<String> getTop5Artists() {
+        List<User> sortedUsers = new ArrayList<>();
+        for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
+            users.get(i).calculateTotalLikes();
+            sortedUsers.add(users.get(i));
+        }
+
+        sortedUsers.sort(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return o2.getTotalLikes() - o1.getTotalLikes();
+            }
+        });
+
+        List<String> result = new ArrayList<>();
+
+        for (User user : sortedUsers) {
+            if (result.size() < LIMIT) {
+                result.add(user.getUsername());
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Gets all the online users
      *

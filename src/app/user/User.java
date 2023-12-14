@@ -67,7 +67,12 @@ public abstract class User {
     public abstract String checkIfUserCanBeDeleted();
     public abstract String deleteUsersConnections();
     public abstract List<Playlist> getPlaylists();
+    public abstract void calculateTotalLikes();
     public Player getPlayer() {return null;}
+
+    public int getTotalLikes() {
+        return 0;
+    }
 
     public String getUsername() {
         return username;

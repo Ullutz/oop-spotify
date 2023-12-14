@@ -154,6 +154,9 @@ public class HostUser extends User {
     }
 
     @Override
+    public void calculateTotalLikes() {}
+
+    @Override
     public List<Playlist> getPlaylists() {
         return null;
     }

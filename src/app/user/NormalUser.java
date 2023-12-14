@@ -210,7 +210,7 @@ public class NormalUser extends User {
         }
 
         if (!player.getType().equals("playlist")) {
-            return "The loaded source is not a playlist.";
+            return "The loaded source is not a playlist or an album.";
         }
 
         player.shuffle(seed);
@@ -612,6 +612,9 @@ public class NormalUser extends User {
 
         return getUsername() + " was successfully deleted.";
     }
+
+    @Override
+    public void calculateTotalLikes() {}
 
     @Override
     public String removeAlbum(String name) {

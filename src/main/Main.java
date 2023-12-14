@@ -77,7 +77,7 @@ public final class Main {
                         + "library/library.json"),
                 LibraryInput.class);
         CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + "test08_etapa2_searchHost_printCurrentPage.json"),
+                        + filePath1),
                 CommandInput[].class);
         ArrayNode outputs = objectMapper.createArrayNode();
 
@@ -157,6 +157,8 @@ public final class Main {
                     outputs.add(new RemoveAlbumCommand().execute(command));
                 case "removePodcast" ->
                     outputs.add(new RemovePodcastCommand().execute(command));
+                case "getTop5Artists" ->
+                    outputs.add(new GetTop5ArtistsCommand().execute(command));
                 default -> System.out.println("Invalid command " + commandName);
             }
         }

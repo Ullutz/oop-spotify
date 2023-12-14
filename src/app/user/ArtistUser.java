@@ -15,6 +15,7 @@ import java.util.*;
 
 public class ArtistUser extends User {
 
+    private int totalLikes;
     private ArrayList<Album> albums;
     private ArrayList<Merch> merches;
     private ArrayList<Event> events;
@@ -25,6 +26,7 @@ public class ArtistUser extends User {
         albums = new ArrayList<>();
         merches = new ArrayList<>();
         events = new ArrayList<>();
+        totalLikes = 0;
     }
 
     @Override
@@ -98,8 +100,10 @@ public class ArtistUser extends User {
             Player player = ((NormalUser) Admin.getInstance().
                     getUsers().get(i)).getPlayer();
 
-            if (player.getSource().getAudioCollection().equals(album)) {
-                return getUsername() + " can't delete this album.";
+            if (player.getSource() != null) {
+                if (player.getSource().getAudioCollection().equals(album)) {
+                    return getUsername() + " can't delete this album.";
+                }
             }
         }
 
@@ -230,6 +234,16 @@ public class ArtistUser extends User {
     }
 
     @Override
+    public void calculateTotalLikes() {
+        totalLikes = 0;
+        for (Album album : albums) {
+            for (Song song : album.getSongs()) {
+                totalLikes += song.getLikes();
+            }
+        }
+    }
+
+    @Override
     public List<Playlist> getPlaylists() {
         return null;
     }
@@ -312,5 +326,13 @@ public class ArtistUser extends User {
 
     public void setEvents(ArrayList<Event> events) {
         this.events = events;
+    }
+
+    public int getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(int totalLikes) {
+        this.totalLikes = totalLikes;
     }
 }
