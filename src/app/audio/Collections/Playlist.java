@@ -3,7 +3,6 @@ package app.audio.Collections;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.utils.Enums;
-import lombok.Getter;
 
 import java.util.ArrayList;
 
@@ -41,10 +40,16 @@ public class Playlist extends AudioCollection {
         this.timestamp = timestamp;
     }
 
+    /**
+     * calculates the total likes of the playlist
+     *
+     * @return the total likes
+     */
     public Integer calculateTotalLikes() {
         Integer totalLikes = 0;
-        for (Song song : songs)
+        for (Song song : songs) {
             totalLikes += song.getLikes();
+        }
 
         return totalLikes;
     }
@@ -111,26 +116,28 @@ public class Playlist extends AudioCollection {
         followers--;
     }
 
+    /**
+     * @return the number of songs in the playlist
+     */
     @Override
     public int getNumberOfTracks() {
         return songs.size();
     }
 
     @Override
-    public AudioFile getTrackByIndex(final int index) {
-        System.out.println(songs.size());
+    public final AudioFile getTrackByIndex(final int index) {
         return songs.get(index);
     }
 
     @Override
-    public boolean isVisibleToUser(final String user) {
+    public final boolean isVisibleToUser(final String user) {
         return this.getVisibility() == Enums.Visibility.PUBLIC
                || (this.getVisibility() == Enums.Visibility.PRIVATE
                    && this.getOwner().equals(user));
     }
 
     @Override
-    public boolean matchesFollowers(final String followerNum) {
+    public final boolean matchesFollowers(final String followerNum) {
         return filterByFollowersCount(this.getFollowers(), followerNum);
     }
 
@@ -144,31 +151,34 @@ public class Playlist extends AudioCollection {
         }
     }
 
+    /**
+     * @return the list of songs
+     */
     public ArrayList<Song> getSongs() {
         return songs;
     }
 
-    public Enums.Visibility getVisibility() {
+    public final Enums.Visibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Enums.Visibility visibility) {
+    public final void setVisibility(final Enums.Visibility visibility) {
         this.visibility = visibility;
     }
 
-    public Integer getFollowers() {
+    public final Integer getFollowers() {
         return followers;
     }
 
-    public void setFollowers(Integer followers) {
+    public final void setFollowers(final Integer followers) {
         this.followers = followers;
     }
 
-    public int getTimestamp() {
+    public final int getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public final void setTimestamp(final int timestamp) {
         this.timestamp = timestamp;
     }
 }

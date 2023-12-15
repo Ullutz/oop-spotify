@@ -1,18 +1,17 @@
 package app.Commands;
 
 import app.Admin;
-import app.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
 import java.util.List;
 
-public class GetTop5SongsCommand implements Command {
+public final class GetTop5SongsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         List<String> songs = Admin.getInstance().getTop5Songs();
 
         ObjectNode objectNode = objectMapper.createObjectNode();

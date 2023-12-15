@@ -6,18 +6,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
-public class AddEventCommand implements Command {
+public final class AddEventCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         String message;
 
         if (user == null) {
             message = "The username " + commandInput.getUsername() + " doesn't exist.";
         } else {
-            message = user.addEvent(commandInput.getName(), commandInput.getDescription(), commandInput.getDate());
+            message = user.addEvent(commandInput.getName(),
+                    commandInput.getDescription(), commandInput.getDate());
         }
 
         ObjectNode obj = objectMapper.createObjectNode();

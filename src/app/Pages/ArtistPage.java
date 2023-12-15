@@ -3,7 +3,6 @@ package app.Pages;
 import app.audio.Collections.Album;
 import app.user.Event;
 import app.user.Merch;
-import app.user.NormalUser;
 import app.user.User;
 
 import java.util.ArrayList;
@@ -11,12 +10,12 @@ import java.util.List;
 
 public class ArtistPage implements Page {
     private String owner;
-    List<Album> albums = new ArrayList<>();
-    List<Merch> merches = new ArrayList<>();
-    List<Event> events = new ArrayList<>();
+    private List<Album> albums = new ArrayList<>();
+    private List<Merch> merches = new ArrayList<>();
+    private List<Event> events = new ArrayList<>();
 
     @Override
-    public StringBuilder printCurrentPage(User user) {
+    public final StringBuilder printCurrentPage(final User user) {
         this.updatePage(user);
 
         StringBuilder message = new StringBuilder("Albums:\n\t[");
@@ -52,7 +51,7 @@ public class ArtistPage implements Page {
     }
 
     @Override
-    public void updatePage(User user) {
+    public final void updatePage(final User user) {
         owner = user.getUsername();
         albums.clear();
         merches.clear();
@@ -63,11 +62,11 @@ public class ArtistPage implements Page {
         events.addAll(user.getEvents());
     }
 
-    public String getOwner() {
+    public final String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public final void setOwner(final String owner) {
         this.owner = owner;
     }
 }

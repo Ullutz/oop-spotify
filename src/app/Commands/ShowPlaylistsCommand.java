@@ -10,11 +10,11 @@ import fileio.input.CommandInput;
 
 import java.util.ArrayList;
 
-public class ShowPlaylistsCommand implements Command {
+public final class ShowPlaylistsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         ArrayList<PlaylistOutput> playlists = ((NormalUser) user).showPlaylists();
 

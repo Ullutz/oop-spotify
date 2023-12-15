@@ -1,17 +1,16 @@
 package app.Commands;
 
 import app.Admin;
-import app.user.ArtistUser;
 import app.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
-public class AddAlbumCommand implements Command {
+public final class AddAlbumCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         String message;
 
@@ -19,7 +18,8 @@ public class AddAlbumCommand implements Command {
             message = "The username " + commandInput.getUsername() + " doesn't exist.";
         } else {
             message = user.addAlbum(commandInput.getName(), commandInput.getReleaseYear(),
-                    commandInput.getDescription(), commandInput.getSongs(), commandInput.getTimestamp());
+                    commandInput.getDescription(), commandInput.getSongs(),
+                    commandInput.getTimestamp());
 
             Admin.getInstance().addSongs(commandInput.getSongs());
         }

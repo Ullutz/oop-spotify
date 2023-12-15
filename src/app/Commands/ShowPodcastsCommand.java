@@ -12,18 +12,18 @@ import fileio.input.CommandInput;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowPodcastsCommand implements Command {
+public final class ShowPodcastsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
 
         class PodcastResult {
-            final String name;
-            final List<String> episodeNames;
+            private final String name;
+            private final List<String> episodeNames;
 
-            public PodcastResult(final String name, final List<String> episodeNames) {
+            PodcastResult(final String name, final List<String> episodeNames) {
                 this.name = name;
                 this.episodeNames = episodeNames;
             }
@@ -32,7 +32,7 @@ public class ShowPodcastsCommand implements Command {
                 return name;
             }
 
-            public List<String> getEpisodes () {
+            public List<String> getEpisodes() {
                 return episodeNames;
             }
         }

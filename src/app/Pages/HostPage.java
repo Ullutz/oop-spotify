@@ -2,21 +2,19 @@ package app.Pages;
 
 import app.audio.Collections.Podcast;
 import app.audio.Files.Episode;
-import app.player.PodcastBookmark;
 import app.user.Announcement;
 import app.user.User;
-import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HostPage implements Page {
     private String owner;
-    List<Podcast> podcasts = new ArrayList<>();
-    List<Announcement> announcements = new ArrayList<>();
+    private List<Podcast> podcasts = new ArrayList<>();
+    private List<Announcement> announcements = new ArrayList<>();
 
     @Override
-    public StringBuilder printCurrentPage(User user) {
+    public final StringBuilder printCurrentPage(final User user) {
         updatePage(user);
 
         StringBuilder message = new StringBuilder("Podcasts:\n\t[");
@@ -40,15 +38,16 @@ public class HostPage implements Page {
                     append(announcement.getDescription()).append("\n,");
         }
 
-        if (!announcements.isEmpty())
+        if (!announcements.isEmpty()) {
             message.delete(message.length() - 2, message.length());
+        }
 
         message.append("\n]");
         return message;
     }
 
     @Override
-    public void updatePage(User user) {
+    public final void updatePage(final User user) {
         podcasts.clear();
         announcements.clear();
 
@@ -57,12 +56,12 @@ public class HostPage implements Page {
     }
 
     @Override
-    public String getOwner() {
+    public final String getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(String username) {
+    public final void setOwner(final String username) {
         owner = username;
     }
 }

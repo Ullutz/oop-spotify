@@ -5,5 +5,10 @@ import fileio.input.CommandInput;
 
 public interface Command {
 
-    public ObjectNode execute(final CommandInput commandInput);
+    /**
+     * executes a command
+     * @param commandInput the input of that command
+     * @return an objectnode
+     */
+    ObjectNode execute(CommandInput commandInput);
 }

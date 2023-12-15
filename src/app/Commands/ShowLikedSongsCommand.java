@@ -9,11 +9,11 @@ import fileio.input.CommandInput;
 
 import java.util.ArrayList;
 
-public class ShowLikedSongsCommand implements Command {
+public final class ShowLikedSongsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         ArrayList<String> songs = ((NormalUser) user).showPreferredSongs();
 

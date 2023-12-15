@@ -2,15 +2,8 @@ package app.user;
 
 import app.Pages.Page;
 import app.audio.Collections.*;
-import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
-import app.audio.LibraryEntry;
 import app.player.Player;
-import app.player.PlayerStats;
-import app.player.PodcastBookmark;
-import app.searchBar.Filters;
-import app.searchBar.SearchBar;
-import app.utils.Enums;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
@@ -38,79 +31,211 @@ public abstract class User {
         this.username = username;
         this.age = age;
         this.city = city;
-        pages = new Page[4];
+        pages = new Page[2 + 2];
         indexOfCurrentPage = 0;
     }
 
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
     public abstract String switchConnectionStatus();
-    public abstract String addAlbum(final String name, final int releaseYear,
-                                    final String desciption, final List<SongInput> songs,
-                                    final int timestamp);
-    public abstract String changePage(String page);
-    public abstract String printCurrentPage();
-    public abstract List<Song> getLikedSongs();
-    public abstract List<Playlist> getFollowedPlaylists();
-    public abstract String addEvent(String name, String description, String date);
-    public abstract String removeEvent(String name);
-    public boolean matchesName(String name) {return false;}
-    public abstract ArrayList<Album> getAlbums();
-    public abstract ArrayList<Merch> getMerches();
-    public abstract ArrayList<Event> getEvents();
-    public abstract String removeAlbum(String name);
-    public abstract String addMerch(String name, String description, int price);
-    public abstract String addAnnouncement(String name, String description);
-    public abstract String removeAnnouncement(String name);
-    public abstract String addPodcast(String name, List<EpisodeInput> episodes);
-    public abstract String removePodcast(String name);
-    public abstract ArrayList<Podcast> getPodcasts();
-    public abstract ArrayList<Announcement> getAnnouncements();
-    public abstract String checkIfUserCanBeDeleted();
-    public abstract String deleteUsersConnections();
-    public abstract List<Playlist> getPlaylists();
-    public abstract void calculateTotalLikes();
-    public Player getPlayer() {return null;}
 
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String addAlbum(String name, int releaseYear,
+                                    String desciption, List<SongInput> songs,
+                                    int timestamp);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String changePage(String page);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String printCurrentPage();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract List<Song> getLikedSongs();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract List<Playlist> getFollowedPlaylists();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String addEvent(String name, String description, String date);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String removeEvent(String name);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public boolean matchesName(final String name) {
+        return false;
+    }
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract ArrayList<Album> getAlbums();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract ArrayList<Merch> getMerches();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract ArrayList<Event> getEvents();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String removeAlbum(String name);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String addMerch(String name, String description, int price);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String addAnnouncement(String name, String description);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String removeAnnouncement(String name);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String addPodcast(String name, List<EpisodeInput> episodes);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String removePodcast(String name);
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract ArrayList<Podcast> getPodcasts();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract ArrayList<Announcement> getAnnouncements();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String checkIfUserCanBeDeleted();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract String deleteUsersConnections();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract List<Playlist> getPlaylists();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public abstract void calculateTotalLikes();
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
+    public Player getPlayer() {
+        return null;
+    }
+
+    /**
+     * abstract method ment to be called by this class extenders, so
+     * it can act different for avery one of them
+     */
     public int getTotalLikes() {
         return 0;
     }
 
-    public String getUsername() {
+    public final String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public final void setUsername(final String username) {
         this.username = username;
     }
 
-    public int getAge() {
+    public final int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public final void setAge(final int age) {
         this.age = age;
     }
 
-    public String getCity() {
+    public final String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public final void setCity(final String city) {
         this.city = city;
     }
 
-    public Page[] getPages() {
+    public final Page[] getPages() {
         return pages;
     }
 
-    public void setPages(Page[] pages) {
+    public final void setPages(final Page[] pages) {
         this.pages = pages;
     }
 
-    public int getIndexOfCurrentPage() {
+    public final int getIndexOfCurrentPage() {
         return indexOfCurrentPage;
     }
 
-    public void setIndexOfCurrentPage(int indexOfCurrentPage) {
+    public final void setIndexOfCurrentPage(final int indexOfCurrentPage) {
         this.indexOfCurrentPage = indexOfCurrentPage;
     }
 }

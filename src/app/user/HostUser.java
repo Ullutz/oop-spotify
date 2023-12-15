@@ -23,6 +23,13 @@ public class HostUser extends User {
         podcasts = new ArrayList<>();
     }
 
+    /**
+     * adds a podcast
+     *
+     * @param name podcast name
+     * @param episodes list of episodes
+     * @return a message
+     */
     @Override
     public String addPodcast(final String name, final List<EpisodeInput> episodes) {
         for (Podcast podcast : podcasts) {
@@ -50,6 +57,12 @@ public class HostUser extends User {
     }
 
 
+    /**
+     * removes a podcast
+     *
+     * @param name the podcast name
+     * @return a message
+     */
     @Override
     public String removePodcast(final String name) {
         Podcast podcast = null;
@@ -69,8 +82,9 @@ public class HostUser extends User {
                     getUsers().get(i)).getPlayer();
 
             if (player.getSource() != null) {
-                if (player.getSource().getAudioCollection().equals(podcast))
+                if (player.getSource().getAudioCollection().equals(podcast)) {
                     return getUsername() + " can't delete this podcast.";
+                }
             }
         }
 
@@ -80,8 +94,15 @@ public class HostUser extends User {
         return getUsername() + " deleted the podcast successfully.";
     }
 
+    /**
+     * adds an announcement
+     *
+     * @param name announcement name
+     * @param description announcement description
+     * @return a message
+     */
     @Override
-    public String addAnnouncement(String name, String description) {
+    public String addAnnouncement(final String name, final String description) {
         for (Announcement announcement : announcements) {
             if (announcement.getName().equals(name)) {
                 return getUsername() + " has already added an announcement with the same name.";
@@ -92,8 +113,14 @@ public class HostUser extends User {
         return getUsername() + " has successfully added new announcement.";
     }
 
+    /**
+     * removes an announcement
+     *
+     * @param name announcement name
+     * @return a message
+     */
     @Override
-    public String removeAnnouncement(String name) {
+    public String removeAnnouncement(final String name) {
         Announcement announcement = null;
         for (Announcement announcement1 : announcements) {
             if (announcement1.getName().equals(name)) {
@@ -110,6 +137,11 @@ public class HostUser extends User {
         return getUsername() + " has successfully deleted the announcement.";
     }
 
+    /**
+     * checks if the host can be deleted
+     *
+     * @return a message
+     */
     @Override
     public String checkIfUserCanBeDeleted() {
         for (Podcast podcast : podcasts) {
@@ -129,8 +161,8 @@ public class HostUser extends User {
             User user = Admin.getInstance().getUsers().get(i);
             int indexOfPage = user.getIndexOfCurrentPage();
 
-            if (indexOfPage == 3) {
-                if (user.getPages()[3].getOwner().equals(getUsername())) {
+            if (indexOfPage == 2 + 1) {
+                if (user.getPages()[2 + 1].getOwner().equals(getUsername())) {
                     return getUsername() + " can't be deleted.";
                 }
             }
@@ -139,6 +171,11 @@ public class HostUser extends User {
         return "ok";
     }
 
+    /**
+     * deletes the host and all of its connections
+     *
+     * @return a message
+     */
     @Override
     public String deleteUsersConnections() {
         Iterator<Podcast> iterator = podcasts.iterator();
@@ -154,99 +191,138 @@ public class HostUser extends User {
     }
 
     @Override
-    public void calculateTotalLikes() {}
+    public void calculateTotalLikes() { }
 
+    /**
+     * returns null since a host doesn't have playlists
+     *
+     * @return null
+     */
     @Override
     public List<Playlist> getPlaylists() {
         return null;
     }
 
+    /**
+     * @return error message since a host can't be online or offline
+     */
     @Override
     public String switchConnectionStatus() {
         return this.getUsername() + " is not a normal user.";
     }
 
+    /**
+     * @return error message since a host can't add an album
+     */
     @Override
-    public String addAlbum(String name, int releaseYear,
-                           String desciption, List<SongInput> songs, final int timetamp) {
+    public String addAlbum(final String name, final int releaseYear,
+                           final String description, final List<SongInput> songs,
+                           final int timestamp) {
         return this.getUsername() + " is not an artist.";
     }
 
+    /**
+     * @return error message since a host can't add merch
+     */
     @Override
-    public String addMerch(String name, String descpription, int price) {
+    public String addMerch(final String name, final String description, final int price) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * @return error message since a host can't remove an album
+     */
     @Override
-    public String removeAlbum(String name) {
+    public String removeAlbum(final String name) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * check to see if the host has the username given
+     *
+     * @param name the username
+     * @return true or false
+     */
     @Override
-    public boolean matchesName(String name) {
+    public boolean matchesName(final String name) {
         return getUsername().startsWith(name);
     }
 
     @Override
-    public ArrayList<Album> getAlbums() {
+    public final ArrayList<Album> getAlbums() {
         return null;
     }
 
     @Override
-    public ArrayList<Merch> getMerches() {
+    public final ArrayList<Merch> getMerches() {
         return null;
     }
 
     @Override
-    public ArrayList<Event> getEvents() {
+    public final ArrayList<Event> getEvents() {
         return null;
     }
 
     @Override
-    public List<Song> getLikedSongs() {
+    public final List<Song> getLikedSongs() {
         return null;
     }
 
     @Override
-    public List<Playlist> getFollowedPlaylists() {
+    public final List<Playlist> getFollowedPlaylists() {
         return null;
     }
 
+    /**
+     * @return error message since a host can't print the page
+     */
     @Override
     public String printCurrentPage() {
         return getUsername() + " is not a normal user.";
     }
 
+    /**
+     * changes the page
+     *
+     * @param page the page we want to go to
+     * @return error message since a host can't change the page
+     */
     @Override
-    public String changePage(String page) {
+    public String changePage(final String page) {
         return getUsername() + " is not a normal user.";
     }
 
+    /**
+     * @return error message since a host can't add events
+     */
     @Override
     public String addEvent(final String name, final String description, final String date) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * @return error message since a host can't remove events
+     */
     @Override
-    public String removeEvent(String name) {
+    public String removeEvent(final String name) {
         return getUsername() + " is not an artist.";
     }
 
     @Override
-    public ArrayList<Podcast> getPodcasts() {
+    public final ArrayList<Podcast> getPodcasts() {
         return podcasts;
     }
 
-    public void setPodcasts(ArrayList<Podcast> podcasts) {
+    public final void setPodcasts(final ArrayList<Podcast> podcasts) {
         this.podcasts = podcasts;
     }
 
     @Override
-    public ArrayList<Announcement> getAnnouncements() {
+    public final ArrayList<Announcement> getAnnouncements() {
         return announcements;
     }
 
-    public void setAnnouncements(ArrayList<Announcement> announcements) {
+    public final void setAnnouncements(final ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
 }

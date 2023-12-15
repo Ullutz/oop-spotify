@@ -32,6 +32,13 @@ public final class FilterUtils {
         return result;
     }
 
+    /**
+     * filter users by username
+     *
+     * @param entries the list of user entries
+     * @param name the username we filter by
+     * @return list of users that respect the condition
+     */
     public static List<User> filterUserByName(final List<User> entries,
                                                final String name) {
         List<User> result = new ArrayList<>();
@@ -127,6 +134,14 @@ public final class FilterUtils {
                                                    final String user) {
         return filter(entries, entry -> entry.matchesOwner(user));
     }
+
+    /**
+     * Filter by description list
+     *
+     * @param entries      the entries
+     * @param description  the description
+     * @return the list of entries that have that description
+     */
     public static List<LibraryEntry> filterByDescription(final List<LibraryEntry> entries,
                                                          final String description) {
         return filter(entries, entry -> entry.matchesDescription(description));
@@ -156,6 +171,13 @@ public final class FilterUtils {
         return filter(entries, entry -> entry.matchesFollowers(followers));
     }
 
+    /**
+     * filter function
+     *
+     * @param entries the entries
+     * @param criteria the criteria
+     * @return list of entries that respect that criteria
+     */
     private static List<LibraryEntry> filter(final List<LibraryEntry> entries,
                                              final FilterCriteria criteria) {
         List<LibraryEntry> result = new ArrayList<>();

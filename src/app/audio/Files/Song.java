@@ -1,7 +1,5 @@
 package app.audio.Files;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,11 +90,17 @@ public final class Song extends AudioFile {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Song)
+    public boolean equals(final Object obj) {
+        if (obj instanceof Song) {
             return getName().equals(((Song) obj).getName());
+        }
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     /**
@@ -141,7 +145,7 @@ public final class Song extends AudioFile {
         return likes;
     }
 
-    public void setLikes(Integer likes) {
+    public void setLikes(final Integer likes) {
         this.likes = likes;
     }
 }

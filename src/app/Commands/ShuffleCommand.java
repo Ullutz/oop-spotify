@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
-public class ShuffleCommand implements Command {
-    public static ObjectMapper objectMapper = new ObjectMapper();
+public final class ShuffleCommand implements Command {
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         Integer seed = commandInput.getSeed();
         String message = ((NormalUser) user).shuffle(seed);

@@ -28,14 +28,20 @@ public final class Admin {
     private List<Song> songs = new ArrayList<>();
     private List<Podcast> podcasts = new ArrayList<>();
     private int timestamp = 0;
-    private final int LIMIT = 5;
+    private final int limit = 5;
 
     private Admin() {
     }
 
+    /**
+     * SingleTon pattern
+     *
+     * @return the instance of the Admin
+     */
     public static Admin getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new Admin();
+        }
 
         return instance;
     }
@@ -48,7 +54,8 @@ public final class Admin {
     public void setUser(final List<UserInput> userInputList) {
         users = new ArrayList<>();
         for (UserInput userInput : userInputList) {
-            users.add(new NormalUser(userInput.getUsername(), userInput.getAge(), userInput.getCity()));
+            users.add(new NormalUser(userInput.getUsername(),
+                    userInput.getAge(), userInput.getCity()));
             noNormalUsers++;
         }
     }
@@ -74,12 +81,14 @@ public final class Admin {
      */
     public void addSongs(final List<SongInput> songs) {
         for (SongInput songInput : songs) {
-            Song newSong = new Song(songInput.getName(), songInput.getDuration(), songInput.getAlbum(),
+            Song newSong = new Song(songInput.getName(),
+                    songInput.getDuration(), songInput.getAlbum(),
                     songInput.getTags(), songInput.getLyrics(), songInput.getGenre(),
                     songInput.getReleaseYear(), songInput.getArtist());
 
-            if (verifyIfSongAlreadyExists(newSong))
+            if (verifyIfSongAlreadyExists(newSong)) {
                 this.songs.add(newSong);
+            }
         }
     }
 
@@ -90,7 +99,7 @@ public final class Admin {
      * @return 1 if the song doesn't exist already, 0 otherwise
      *
      */
-    public boolean verifyIfSongAlreadyExists(Song songToBePlaced) {
+    public boolean verifyIfSongAlreadyExists(final Song songToBePlaced) {
         Set<Song> uniqueElements = new HashSet<>(songs);
 
         return uniqueElements.add(songToBePlaced);
@@ -147,6 +156,11 @@ public final class Admin {
         return playlists;
     }
 
+    /**
+     * Gets albums
+     *
+     * @return the albums
+     */
     public List<Album> getAlbums() {
         List<Album> albums = new ArrayList<>();
         for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
@@ -184,8 +198,9 @@ public final class Admin {
         }
 
         for (int i = 0; i < noNormalUsers; i++) {
-            if (((NormalUser) users.get(i)).isConnectionStatus())
+            if (((NormalUser) users.get(i)).isConnectionStatus()) {
                 ((NormalUser) users.get(i)).simulateTime(elapsed);
+            }
         }
     }
 
@@ -200,7 +215,7 @@ public final class Admin {
         List<String> topSongs = new ArrayList<>();
         int count = 0;
         for (Song song : sortedSongs) {
-            if (count >= LIMIT) {
+            if (count >= limit) {
                 break;
             }
             topSongs.add(song.getName());
@@ -222,7 +237,7 @@ public final class Admin {
         List<String> topPlaylists = new ArrayList<>();
         int count = 0;
         for (Playlist playlist : sortedPlaylists) {
-            if (count >= LIMIT) {
+            if (count >= limit) {
                 break;
             }
             topPlaylists.add(playlist.getName());
@@ -231,6 +246,11 @@ public final class Admin {
         return topPlaylists;
     }
 
+    /**
+     * Gets the top 5 Artists
+     *
+     * @return the top 5 artists
+     */
     public List<String> getTop5Artists() {
         List<User> sortedUsers = new ArrayList<>();
         for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
@@ -240,7 +260,7 @@ public final class Admin {
 
         sortedUsers.sort(new Comparator<User>() {
             @Override
-            public int compare(User o1, User o2) {
+            public int compare(final User o1, final User o2) {
                 return o2.getTotalLikes() - o1.getTotalLikes();
             }
         });
@@ -248,7 +268,7 @@ public final class Admin {
         List<String> result = new ArrayList<>();
 
         for (User user : sortedUsers) {
-            if (result.size() < LIMIT) {
+            if (result.size() < limit) {
                 result.add(user.getUsername());
             }
         }
@@ -256,6 +276,11 @@ public final class Admin {
         return result;
     }
 
+    /**
+     * Gets the top 5 albums
+     *
+     * @return the top 5 albums
+     */
     public List<String> getTop5Albums() {
         List<Album> sortedAlbums = new ArrayList<>(getAlbums());
         for (Album album : sortedAlbums) {
@@ -267,7 +292,7 @@ public final class Admin {
         List<String> topAlbums = new ArrayList<>();
         int count = 0;
         for (Playlist playlist : sortedAlbums) {
-            if (count >= LIMIT) {
+            if (count >= limit) {
                 break;
             }
             topAlbums.add(playlist.getName());
@@ -284,8 +309,9 @@ public final class Admin {
     public List<String> getOnlineUsers() {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < noNormalUsers; i++) {
-            if (((NormalUser) users.get(i)).isConnectionStatus())
+            if (((NormalUser) users.get(i)).isConnectionStatus()) {
                 result.add(users.get(i).getUsername());
+            }
         }
 
         return result;
@@ -321,6 +347,11 @@ public final class Admin {
         return artistUsers;
     }
 
+    /**
+     * Gets all the hosts
+     *
+     * @return a list of all the hosts
+     */
     public List<HostUser> getHosts() {
         List<HostUser> hostUsers = new ArrayList<>();
 
@@ -331,6 +362,15 @@ public final class Admin {
         return hostUsers;
     }
 
+    /**
+     * Adds an user to the list based on its type
+     *
+     * @param type the type of user
+     * @param username the username
+     * @param age the age
+     * @param city the city
+     * @return message
+     */
     public String addUser(final String type, final String username,
                           final int age, final String city) {
 
@@ -357,6 +397,7 @@ public final class Admin {
                 users.add(users.size(), user);
                 noHostUsers++;
             }
+            default -> { }
         }
 
         return "The username " + username + " has been added successfully.";
@@ -386,10 +427,17 @@ public final class Admin {
         return message;
     }
 
-    public Song getSong(Song song) {
+    /**
+     * Gets the song instance in the library of a song
+     *
+     * @param song the song
+     * @return the instance of the song that is in the library
+     */
+    public Song getSong(final Song song) {
         for (Song song1 : songs) {
-            if (song1.equals(song))
+            if (song1.equals(song)) {
                 return song1;
+            }
         }
 
         return null;
@@ -412,16 +460,21 @@ public final class Admin {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    /**
+     * sets the user list
+     *
+     * @param users the users
+     */
+    public void setUsers(final List<User> users) {
         this.users = users;
         noNormalUsers = users.size();
     }
 
-    public void setSongs(List<Song> songs) {
+    public void setSongs(final List<Song> songs) {
         this.songs = songs;
     }
 
-    public void setPodcasts(List<Podcast> podcasts) {
+    public void setPodcasts(final List<Podcast> podcasts) {
         this.podcasts = podcasts;
     }
 
@@ -429,19 +482,19 @@ public final class Admin {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(final int timestamp) {
         this.timestamp = timestamp;
     }
 
     public int getLIMIT() {
-        return LIMIT;
+        return limit;
     }
 
     public int getNoArtistUsers() {
         return noArtistUsers;
     }
 
-    public void setNoArtistUsers(int noArtistUsers) {
+    public void setNoArtistUsers(final int noArtistUsers) {
         this.noArtistUsers = noArtistUsers;
     }
 
@@ -449,7 +502,7 @@ public final class Admin {
         return noHostUsers;
     }
 
-    public void setNoHostUsers(int noHostUsers) {
+    public void setNoHostUsers(final int noHostUsers) {
         this.noHostUsers = noHostUsers;
     }
 
@@ -457,7 +510,7 @@ public final class Admin {
         return noNormalUsers;
     }
 
-    public void setNoNormalUsers(int noNormalUsers) {
+    public void setNoNormalUsers(final int noNormalUsers) {
         this.noNormalUsers = noNormalUsers;
     }
 }

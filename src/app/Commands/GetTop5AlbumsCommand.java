@@ -7,11 +7,11 @@ import fileio.input.CommandInput;
 
 import java.util.List;
 
-public class GetTop5AlbumsCommand implements Command {
+public final class GetTop5AlbumsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         List<String> results = Admin.getInstance().getTop5Albums();
 
         ObjectNode objectNode = objectMapper.createObjectNode();

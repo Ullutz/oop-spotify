@@ -42,7 +42,7 @@ public final class SearchBar {
     }
 
     /**
-     * Search list.
+     * Search list for library entry.
      *
      * @param filters the filters
      * @param type    the type
@@ -145,14 +145,22 @@ public final class SearchBar {
         return this.resultsAudio;
     }
 
+    /**
+     * Search list for user type
+     *
+     * @param filters the filters
+     * @param type type of the user
+     * @return the list of users found
+     */
     public List<User> searchArtistsOrHosts(final Filters filters, final String type) {
         resultsAudio.clear();
         List<User> entriesUsers;
 
-        if (type.equals("artist"))
+        if (type.equals("artist")) {
             entriesUsers = new ArrayList<>(Admin.getInstance().getArtists());
-        else
+        } else {
             entriesUsers = new ArrayList<>(Admin.getInstance().getHosts());
+        }
 
         entriesUsers = filterUserByName(entriesUsers, filters.getName());
 
@@ -186,6 +194,12 @@ public final class SearchBar {
         }
     }
 
+    /**
+     * Select the user type
+     *
+     * @param itemNumber the item number
+     * @return the user instance
+     */
     public User selectUser(final Integer itemNumber) {
         if (this.resultsUsers.size() < itemNumber) {
             resultsAudio.clear();
@@ -205,7 +219,7 @@ public final class SearchBar {
         return resultsAudio;
     }
 
-    public void setAudioResults(List<LibraryEntry> results) {
+    public void setAudioResults(final List<LibraryEntry> results) {
         this.resultsAudio = results;
     }
 
@@ -217,7 +231,7 @@ public final class SearchBar {
         return lastSearchType;
     }
 
-    public void setLastSearchType(String lastSearchType) {
+    public void setLastSearchType(final String lastSearchType) {
         this.lastSearchType = lastSearchType;
     }
 
@@ -225,7 +239,7 @@ public final class SearchBar {
         return lastSelectedAudio;
     }
 
-    public void setLastSelectedAudio(LibraryEntry lastSelected) {
+    public void setLastSelectedAudio(final LibraryEntry lastSelected) {
         this.lastSelectedAudio = lastSelected;
     }
 
@@ -233,7 +247,7 @@ public final class SearchBar {
         return resultsAudio;
     }
 
-    public void setResultsAudio(List<LibraryEntry> resultsAudio) {
+    public void setResultsAudio(final List<LibraryEntry> resultsAudio) {
         this.resultsAudio = resultsAudio;
     }
 
@@ -241,7 +255,7 @@ public final class SearchBar {
         return resultsUsers;
     }
 
-    public void setResultsUsers(List<User> resultsUsers) {
+    public void setResultsUsers(final List<User> resultsUsers) {
         this.resultsUsers = resultsUsers;
     }
 
@@ -249,7 +263,7 @@ public final class SearchBar {
         return lastSelectedUser;
     }
 
-    public void setLastSelectedUser(User lastSelectedUser) {
+    public void setLastSelectedUser(final User lastSelectedUser) {
         this.lastSelectedUser = lastSelectedUser;
     }
 }

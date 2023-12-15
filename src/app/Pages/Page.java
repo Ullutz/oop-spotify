@@ -1,13 +1,34 @@
 package app.Pages;
 
-import app.user.NormalUser;
 import app.user.User;
 
 public interface Page {
-    public StringBuilder printCurrentPage(User user);
+    /**
+     * prints the current page
+     *
+     * @param user the user
+     * @return a stringbuilder
+     */
+    StringBuilder printCurrentPage(User user);
 
-    public void updatePage(User user);
+    /**
+     * updates the elemts of the page
+     *
+     * @param user the user
+     */
+    void updatePage(User user);
 
-    public String getOwner();
-    public void setOwner(String username);
+    /**
+     * gets the owner of the page
+     *
+     * @return the owner
+     */
+    String getOwner();
+
+    /**
+     * sets the owner os the page
+     *
+     * @param username the username
+     */
+    void setOwner(String username);
 }

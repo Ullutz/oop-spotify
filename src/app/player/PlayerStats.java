@@ -1,7 +1,6 @@
 package app.player;
 
 import app.utils.Enums;
-import lombok.Getter;
 
 public class PlayerStats {
     private final String name;
@@ -41,27 +40,27 @@ public class PlayerStats {
         this.shuffle = shuffle;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public int getRemainedTime() {
+    public final int getRemainedTime() {
         return remainedTime;
     }
 
-    public String getRepeat() {
+    public final String getRepeat() {
         return repeat;
     }
 
-    public void setRepeat(String repeat) {
+    public final void setRepeat(final String repeat) {
         this.repeat = repeat;
     }
 
-    public boolean isShuffle() {
+    public final boolean isShuffle() {
         return shuffle;
     }
 
-    public boolean isPaused() {
+    public final boolean isPaused() {
         return paused;
     }
 }

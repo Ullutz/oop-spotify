@@ -7,11 +7,11 @@ import fileio.input.CommandInput;
 
 import java.util.List;
 
-public class GetTop5PlaylistsCommand implements Command {
+public final class GetTop5PlaylistsCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         List<String> playlists = Admin.getInstance().getTop5Playlists();
 
         ObjectNode objectNode = objectMapper.createObjectNode();

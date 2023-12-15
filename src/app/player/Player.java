@@ -4,7 +4,6 @@ import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.audio.LibraryEntry;
 import app.utils.Enums;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -279,7 +278,7 @@ public final class Player {
         return repeatMode;
     }
 
-    public void setRepeatMode(Enums.RepeatMode repeatMode) {
+    public void setRepeatMode(final Enums.RepeatMode repeatMode) {
         this.repeatMode = repeatMode;
     }
 
@@ -287,7 +286,7 @@ public final class Player {
         return shuffle;
     }
 
-    public void setShuffle(boolean shuffle) {
+    public void setShuffle(final boolean shuffle) {
         this.shuffle = shuffle;
     }
 
@@ -295,7 +294,7 @@ public final class Player {
         return paused;
     }
 
-    public void setPaused(boolean paused) {
+    public void setPaused(final boolean paused) {
         this.paused = paused;
     }
 
@@ -303,7 +302,7 @@ public final class Player {
         return source;
     }
 
-    public void setSource(PlayerSource source) {
+    public void setSource(final PlayerSource source) {
         this.source = source;
     }
 
@@ -311,7 +310,7 @@ public final class Player {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -323,7 +322,7 @@ public final class Player {
         return bookmarks;
     }
 
-    public void setBookmarks(ArrayList<PodcastBookmark> bookmarks) {
+    public void setBookmarks(final ArrayList<PodcastBookmark> bookmarks) {
         this.bookmarks = bookmarks;
     }
 }

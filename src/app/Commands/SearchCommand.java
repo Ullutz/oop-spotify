@@ -10,8 +10,8 @@ import fileio.input.CommandInput;
 
 import java.util.ArrayList;
 
-public class SearchCommand implements Command {
-    public final ObjectMapper objectMapper = new ObjectMapper();
+public final class SearchCommand implements Command {
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());

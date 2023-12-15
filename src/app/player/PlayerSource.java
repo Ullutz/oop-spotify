@@ -3,7 +3,6 @@ package app.player;
 import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.utils.Enums;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,6 +206,9 @@ public class PlayerSource {
         }
     }
 
+    /**
+     * updates the file that is playing
+     */
     private void updateAudioFile() {
         setAudioFile(audioCollection.getTrackByIndex(index));
     }
@@ -220,51 +222,54 @@ public class PlayerSource {
         this.audioFile = audioFile;
     }
 
+    /**
+     * @return the type of the file
+     */
     public Enums.PlayerSourceType getType() {
         return type;
     }
 
-    public void setType(Enums.PlayerSourceType type) {
+    public final void setType(final Enums.PlayerSourceType type) {
         this.type = type;
     }
 
-    public AudioCollection getAudioCollection() {
+    public final AudioCollection getAudioCollection() {
         return audioCollection;
     }
 
-    public void setAudioCollection(AudioCollection audioCollection) {
+    public final void setAudioCollection(final AudioCollection audioCollection) {
         this.audioCollection = audioCollection;
     }
 
-    public AudioFile getAudioFile() {
+    public final AudioFile getAudioFile() {
         return audioFile;
     }
 
-    public int getIndex() {
+    public final int getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public final void setIndex(final int index) {
         this.index = index;
     }
 
-    public int getIndexShuffled() {
+    public final int getIndexShuffled() {
         return indexShuffled;
     }
 
-    public void setIndexShuffled(int indexShuffled) {
+    public final void setIndexShuffled(final int indexShuffled) {
         this.indexShuffled = indexShuffled;
     }
 
-    public int getRemainedDuration() {
+    public final int getRemainedDuration() {
         return remainedDuration;
     }
 
-    public void setRemainedDuration(int remainedDuration) {
+    public final void setRemainedDuration(final int remainedDuration) {
         this.remainedDuration = remainedDuration;
     }
 
-    public List<Integer> getIndices() {
+    public final List<Integer> getIndices() {
         return indices;
     }
 }

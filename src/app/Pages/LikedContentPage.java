@@ -13,7 +13,7 @@ public class LikedContentPage implements Page {
     private List<Playlist> followedPlaylists = new ArrayList<>();
 
     @Override
-    public StringBuilder printCurrentPage(User user) {
+    public final StringBuilder printCurrentPage(final User user) {
         updatePage(user);
 
         StringBuilder message = new StringBuilder("Liked songs:\n\t[");
@@ -41,7 +41,7 @@ public class LikedContentPage implements Page {
     }
 
     @Override
-    public void updatePage(User user) {
+    public final void updatePage(final User user) {
         likedSongs.clear();
         likedSongs.addAll(((NormalUser) user).getLikedSongs());
 
@@ -49,7 +49,14 @@ public class LikedContentPage implements Page {
         followedPlaylists.addAll(((NormalUser) user).getFollowedPlaylists());
     }
 
-    public String getOwner() {return null;}
+    public final String getOwner() {
+        return null;
+    }
 
-    public void setOwner(String username) {}
+    /**
+     * sets the owner of the page
+     *
+     * @param username the username
+     */
+    public final void setOwner(final String username) { }
 }

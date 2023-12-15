@@ -13,7 +13,6 @@ import app.searchBar.SearchBar;
 import app.utils.Enums;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
-import lombok.Builder;
 
 import java.util.*;
 
@@ -38,7 +37,7 @@ public class NormalUser extends User {
         pages[0] = new HomePage();
         pages[1] = new LikedContentPage();
         pages[2] = new ArtistPage();
-        pages[3] = new HostPage();
+        pages[2 + 1] = new HostPage();
     }
 
     /**
@@ -68,6 +67,12 @@ public class NormalUser extends User {
         return results;
     }
 
+    /**
+     * Selected helper, it decides which type of select it runs
+     *
+     * @param itemNumber the item number
+     * @return message
+     */
     public String selectHelper(final int itemNumber) {
         if (!lastSearched) {
             return "Please conduct a search before making a selection.";
@@ -75,8 +80,8 @@ public class NormalUser extends User {
 
         lastSearched = false;
 
-        if (searchBar.getLastSearchType().equals("artist") ||
-            searchBar.getLastSearchType().equals("host")) {
+        if (searchBar.getLastSearchType().equals("artist")
+                || searchBar.getLastSearchType().equals("host")) {
             return selectArtistOrHost(itemNumber);
         } else {
             return selectAudio(itemNumber);
@@ -100,6 +105,12 @@ public class NormalUser extends User {
         return "Successfully selected %s.".formatted(selectedAudio.getName());
     }
 
+    /**
+     * Select string
+     *
+     * @param itemNumber the item number
+     * @return the message
+     */
     public String selectArtistOrHost(final int itemNumber) {
 
         User selectedUser = searchBar.selectUser(itemNumber);
@@ -112,7 +123,7 @@ public class NormalUser extends User {
             pages[2].setOwner(selectedUser.getUsername());
             changePage("ArtistPage");
         } else {
-            pages[3].setOwner(selectedUser.getUsername());
+            pages[2 + 1].setOwner(selectedUser.getUsername());
             changePage("HostPage");
         }
 
@@ -447,7 +458,7 @@ public class NormalUser extends User {
 
         followedPlaylists.sort(new Comparator<Playlist>() {
             @Override
-            public int compare(Playlist o1, Playlist o2) {
+            public int compare(final Playlist o1, final Playlist o2) {
                 return o2.calculateTotalLikes() - o1.calculateTotalLikes();
             }
         });
@@ -521,9 +532,20 @@ public class NormalUser extends User {
         return this.getUsername() + " has changed status successfully.";
     }
 
+    /**
+     * Adds an album
+     *
+     * @param name album name
+     * @param releaseYear release yer
+     * @param description description
+     * @param song list of songs
+     * @param timestamp the timestamp of the addition
+     * @return the error message since a normal user cant add an album
+     */
     @Override
-    public String addAlbum(String name, int releaseYear,
-                           String desciption, List<SongInput> song, int timestamp) {
+    public String addAlbum(final String name, final int releaseYear,
+                           final String description, final List<SongInput> song,
+                           final int timestamp) {
         return this.getUsername() + " is not an artist.";
     }
 
@@ -554,8 +576,8 @@ public class NormalUser extends User {
      * @return message
      */
     @Override
-    public String changePage(String page) {
-        String message = null;
+    public String changePage(final String page) {
+        String message = getUsername() + " is trying to access a non-existent page.";
 
         switch (page) {
             case "Home" -> {
@@ -570,14 +592,19 @@ public class NormalUser extends User {
                 indexOfCurrentPage = 2;
             }
             case "HostPage" -> {
-                indexOfCurrentPage = 3;
+                indexOfCurrentPage = 2 + 1;
             }
-            default -> message = getUsername() + " is trying to access a non-existent page.";
+            default -> { }
         }
 
         return message;
     }
 
+    /**
+     * Checks for the connections of the user
+     *
+     * @return a message
+     */
     @Override
     public String checkIfUserCanBeDeleted() {
         for (Playlist playlist : playlists) {
@@ -596,6 +623,11 @@ public class NormalUser extends User {
         return "ok";
     }
 
+    /**
+     * Deletes the connections of an user
+     *
+     * @return a message
+     */
     @Override
     public String deleteUsersConnections() {
         for (Song song : likedSongs) {
@@ -618,70 +650,124 @@ public class NormalUser extends User {
     }
 
     @Override
-    public void calculateTotalLikes() {}
+    public void calculateTotalLikes() { }
 
+    /**
+     * removes an album
+     *
+     * @param name album name
+     * @return error message since a normal user can't delete an album
+     */
     @Override
-    public String removeAlbum(String name) {
+    public String removeAlbum(final String name) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * adds an event
+     *
+     * @param name event name
+     * @param description event description
+     * @param date event date
+     * @return error message since a normal user can't add an event
+     */
     @Override
     public String addEvent(final String name, final String description, final String date) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * removes an event
+     *
+     * @param name event name
+     * @return error message since a normal user can't remove an event
+     */
     @Override
-    public String removeEvent(String name) {
+    public String removeEvent(final String name) {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * adds an announcement
+     *
+     * @param name announcement name
+     * @param description announcement description
+     * @return error message since a normal user can't add an announcement
+     */
     @Override
-    public String addAnnouncement(String name, String description) {
+    public String addAnnouncement(final String name, final String description) {
+        return getUsername() + " is not a host.";
+    }
+
+    /**
+     * removes an announcement
+     *
+     * @param name announcement name
+     * @return error message since a normal user can't remove an announcement
+     */
+    @Override
+    public String removeAnnouncement(final String name) {
+        return getUsername() + " is not a host.";
+    }
+
+    /**
+     * add a podcast
+     *
+     * @param name podcast name
+     * @param episodes podcast episode
+     * @return error message since a normal user can't add a podcast
+     */
+    @Override
+    public String addPodcast(final String name, final List<EpisodeInput> episodes) {
+        return getUsername() + " is not a host.";
+    }
+
+    /**
+     * removes a podcast
+     *
+     * @param name podcast name
+     * @return error message since a normal user can't remove a podcast
+     */
+    @Override
+    public String removePodcast(final String name) {
         return getUsername() + " is not a host.";
     }
 
     @Override
-    public String removeAnnouncement(String name) {
-        return getUsername() + " is not a host.";
-    }
-
-    @Override
-    public String addPodcast(String name, List<EpisodeInput> episodes) {
-        return getUsername() + " is not a host.";
-    }
-
-    @Override
-    public String removePodcast(String name) {
-        return getUsername() + " is not a host.";
-    }
-
-    @Override
-    public ArrayList<Podcast> getPodcasts() {
+    public final ArrayList<Podcast> getPodcasts() {
         return null;
     }
 
     @Override
-    public ArrayList<Announcement> getAnnouncements() {
+    public final ArrayList<Announcement> getAnnouncements() {
         return null;
     }
 
     @Override
-    public ArrayList<Album> getAlbums() {
+    public final ArrayList<Album> getAlbums() {
         return null;
     }
 
     @Override
-    public ArrayList<Merch> getMerches() {
+    public final ArrayList<Merch> getMerches() {
         return null;
     }
 
     @Override
-    public ArrayList<Event> getEvents() {
+    public final ArrayList<Event> getEvents() {
         return null;
     }
 
+    /**
+     * adds merch
+     *
+     * @param name merch name
+     * @param descpription merch description
+     * @param price merch price
+     * @return error message since a normal user can't add merch
+     */
     @Override
-    public String addMerch(String name, String descpription, int price) {
+    public String addMerch(final String name, final String descpription, final int price) {
         return getUsername() + " is not an artist.";
     }
 
@@ -694,52 +780,52 @@ public class NormalUser extends User {
         player.simulatePlayer(time);
     }
 
-    public boolean isConnectionStatus() {
+    public final boolean isConnectionStatus() {
         return connectionStatus;
     }
 
-    public void setConnectionStatus(boolean connectionStatus) {
+    public final void setConnectionStatus(final boolean connectionStatus) {
         this.connectionStatus = connectionStatus;
     }
 
-    public ArrayList<Playlist> getPlaylists() {
+    public final ArrayList<Playlist> getPlaylists() {
         return playlists;
     }
 
-    public void setPlaylists(ArrayList<Playlist> playlists) {
+    public final void setPlaylists(final ArrayList<Playlist> playlists) {
         this.playlists = playlists;
     }
 
-    public ArrayList<Song> getLikedSongs() {
+    public final ArrayList<Song> getLikedSongs() {
         return likedSongs;
     }
 
-    public void setLikedSongs(ArrayList<Song> likedSongs) {
+    public final void setLikedSongs(final ArrayList<Song> likedSongs) {
         this.likedSongs = likedSongs;
     }
 
-    public ArrayList<Playlist> getFollowedPlaylists() {
+    public final ArrayList<Playlist> getFollowedPlaylists() {
         return followedPlaylists;
     }
 
-    public void setFollowedPlaylists(ArrayList<Playlist> followedPlaylists) {
+    public final void setFollowedPlaylists(final ArrayList<Playlist> followedPlaylists) {
         this.followedPlaylists = followedPlaylists;
     }
 
     @Override
-    public Player getPlayer() {
+    public final Player getPlayer() {
         return player;
     }
 
-    public SearchBar getSearchBar() {
+    public final SearchBar getSearchBar() {
         return searchBar;
     }
 
-    public boolean isLastSearched() {
+    public final boolean isLastSearched() {
         return lastSearched;
     }
 
-    public void setLastSearched(boolean lastSearched) {
+    public final void setLastSearched(final boolean lastSearched) {
         this.lastSearched = lastSearched;
     }
 }

@@ -1,10 +1,10 @@
 package app.user;
 
-public class Announcement {
+public final class Announcement {
     private String name;
     private String description;
 
-    public Announcement(String name, String description) {
+    public Announcement(final String name, final String description) {
         this.name = name;
         this.description = description;
     }
@@ -13,7 +13,7 @@ public class Announcement {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -21,7 +21,7 @@ public class Announcement {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

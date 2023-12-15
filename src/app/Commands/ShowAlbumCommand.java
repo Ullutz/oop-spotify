@@ -12,18 +12,18 @@ import fileio.input.CommandInput;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowAlbumCommand implements Command {
+public final class ShowAlbumCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode execute(CommandInput commandInput) {
+    public ObjectNode execute(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
 
         class AlbumResult {
-            final String name;
-            final List<String> songs;
+            private final String name;
+            private final List<String> songs;
 
-            public AlbumResult(final String name, final List<String> songNames) {
+            AlbumResult(final String name, final List<String> songNames) {
                 this.name = name;
                 this.songs = songNames;
             }

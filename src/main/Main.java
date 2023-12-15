@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.input.CommandInput;
 import fileio.input.LibraryInput;
-import org.w3c.dom.html.HTMLImageElement;
 
 import java.io.File;
 import java.io.IOException;

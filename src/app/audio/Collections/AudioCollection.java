@@ -2,7 +2,6 @@ package app.audio.Collections;
 
 import app.audio.Files.AudioFile;
 import app.audio.LibraryEntry;
-import lombok.Getter;
 
 /**
  * The type Audio collection.
@@ -45,7 +44,7 @@ public abstract class AudioCollection extends LibraryEntry {
         return this.getOwner().equals(user);
     }
 
-    public String getOwner() {
+    public final String getOwner() {
         return owner;
     }
 }

@@ -27,10 +27,16 @@ public final class Podcast extends AudioCollection {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Podcast)
+    public boolean equals(final Object obj) {
+        if (obj instanceof Podcast) {
             return getName().equals(((Podcast) obj).getName());
+        }
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

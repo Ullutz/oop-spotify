@@ -1,7 +1,6 @@
 package app.audio.Collections;
 
 import app.utils.Enums;
-import lombok.Getter;
 
 import java.util.ArrayList;
 
@@ -23,19 +22,19 @@ public class PlaylistOutput {
         this.followers = playlist.getFollowers();
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public ArrayList<String> getSongs() {
+    public final ArrayList<String> getSongs() {
         return songs;
     }
 
-    public String getVisibility() {
+    public final String getVisibility() {
         return visibility;
     }
 
-    public int getFollowers() {
+    public final int getFollowers() {
         return followers;
     }
 }

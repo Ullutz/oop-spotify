@@ -127,7 +127,7 @@ public abstract class LibraryEntry {
         return false;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 }
