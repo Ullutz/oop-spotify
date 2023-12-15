@@ -1,0 +1,51 @@
+OOP-PROJECT 2023-Global Waves
+Balteanu Vlad 321CAa
+
+    This is a simulation of a spotify like behaviour that uses .json files as
+input and has several commands that can alter the library or show something from
+that library.
+
+Used design patterns for implementation:
+
+    -> SingleTon pattern for the implementation of the admin, since this app
+can only have one admin that controls the songs, podcasts and the statistics
+    -> Visitor pattern for the implementation of the pages, since we have the
+same commands that we can call upon the pages, i decided to separate the Pages
+classes and their respective methods.
+    -> Kind of a Command pattern for the implementation of the commands, since
+when we need to add new commands, we just have to extend the Interface command
+and add a new execute method for what there is to be done.
+
+Brief explanation of the implementation:
+    -> I use the commands package to store a class for every command. In its
+execute method I parse the commandInput and get what I need for every command.
+
+    -> I have an abstract class User that stores an user's username, city and
+age, since every user has those types of fields. Also I have an abstract method
+for every command, so that I dont have to use instanceof when I call a method.
+By overriding every method in the User class, its children(NormalUser, ArtistUser,
+HostUser), can have different implementation for those methods. By doing this,
+at runtime the program check for the dynamic instance of a user and calls the
+correct method.
+
+    -> The Admin stores a list of everyUser and for me it seemed simpler to store
+every type of user in one list. For accessing a certain type of user, I also store
+the number of every type of user in the noUserType fields. With those, I add the
+normal users at the beginning of the list, the artists in the middle, and the hosts
+at the end.
+
+    -> The Admin also deals with every type of addUser, deleteUser, statistics and
+the showAllCommands.
+
+    -> The audio types are divided into two groups, files and collections. All of them
+are in essence a libraryEntry so they all have a name. From there each file type has
+a duration and every collection has an owner. The rest of the classes and specific
+fields depending on what each of them need to store. Furthermore, I concluded that
+an album doesn't need to be a separate class, and since I have to use it the exact
+same as a playlist, I decided to just extend the playlist class and add the releaseYear
+and description fields which are specific for an album.
+
+    -> The pages all implement the Page interface which extends the Visitable one.
+For storing the pages, an user has an array of 4 pages each of them being an instance
+of a different page(Home, LikedContent, Artist and Host). For switching the page, I have
+an index and I just change it to whatever page I want to access.
