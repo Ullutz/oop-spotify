@@ -1,5 +1,6 @@
 package app.Pages;
 
+import app.Pages.Visitor.Visitor;
 import app.audio.Collections.Album;
 import app.user.Event;
 import app.user.Merch;
@@ -15,51 +16,8 @@ public class ArtistPage implements Page {
     private List<Event> events = new ArrayList<>();
 
     @Override
-    public final StringBuilder printCurrentPage(final User user) {
-        this.updatePage(user);
-
-        StringBuilder message = new StringBuilder("Albums:\n\t[");
-        for (Album album : albums) {
-            message.append(album.getName()).append(", ");
-        }
-
-        if (!albums.isEmpty()) {
-            message.delete(message.length() - 2, message.length());
-        }
-        message.append("]\n\nMerch:\n\t[");
-
-        for (Merch merch : merches) {
-            message.append(merch.getName()).append(" - ").append(merch.getPrice());
-            message.append(":\n\t").append(merch.getDescription()).append(", ");
-        }
-
-        if (!merches.isEmpty()) {
-            message.delete(message.length() - 2, message.length());
-        }
-        message.append("]\n\nEvents:\n\t[");
-
-        for (Event event : events) {
-            message.append(event.getName()).append(" - ").append(event.getDate());
-            message.append(":\n\t").append(event.getDescription()).append(", ");
-        }
-
-        if (!events.isEmpty()) {
-            message.delete(message.length() - 2, message.length());
-        }
-        message.append("]");
-        return message;
-    }
-
-    @Override
-    public final void updatePage(final User user) {
-        owner = user.getUsername();
-        albums.clear();
-        merches.clear();
-        events.clear();
-
-        albums.addAll(user.getAlbums());
-        merches.addAll(user.getMerches());
-        events.addAll(user.getEvents());
+    public final StringBuilder accept(final Visitor visitor, final User user) {
+        return visitor.visit(this, user);
     }
 
     public final String getOwner() {
@@ -68,5 +26,29 @@ public class ArtistPage implements Page {
 
     public final void setOwner(final String owner) {
         this.owner = owner;
+    }
+
+    public final List<Album> getAlbums() {
+        return albums;
+    }
+
+    public final void setAlbums(final List<Album> albums) {
+        this.albums = albums;
+    }
+
+    public final List<Merch> getMerches() {
+        return merches;
+    }
+
+    public final void setMerches(final List<Merch> merches) {
+        this.merches = merches;
+    }
+
+    public final List<Event> getEvents() {
+        return events;
+    }
+
+    public final void setEvents(final List<Event> events) {
+        this.events = events;
     }
 }

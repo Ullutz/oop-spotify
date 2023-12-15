@@ -1,22 +1,21 @@
 package app.Pages;
 
+import app.Pages.Visitor.Visitable;
+import app.Pages.Visitor.Visitor;
 import app.user.User;
 
-public interface Page {
-    /**
-     * prints the current page
-     *
-     * @param user the user
-     * @return a stringbuilder
-     */
-    StringBuilder printCurrentPage(User user);
+public interface Page extends Visitable {
+
 
     /**
-     * updates the elemts of the page
+     * accepts the visitor
      *
+     * @param visitor the visitor
      * @param user the user
+     * @return a string builder
      */
-    void updatePage(User user);
+    @Override
+    StringBuilder accept(Visitor visitor, User user);
 
     /**
      * gets the owner of the page

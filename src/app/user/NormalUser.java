@@ -2,6 +2,9 @@ package app.user;
 
 import app.Admin;
 import app.Pages.*;
+import app.Pages.Visitor.PrintPageVisitor;
+import app.Pages.Visitor.UpdatePageVisitor;
+import app.Pages.Visitor.Visitor;
 import app.audio.Collections.*;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
@@ -560,12 +563,17 @@ public class NormalUser extends User {
             return getUsername() + " is offline.";
         }
 
+        Visitor visitor1 = new PrintPageVisitor();
+        Visitor visitor2 = new UpdatePageVisitor();
+
         if (indexOfCurrentPage > 1) {
-            return pages[indexOfCurrentPage].
-                    printCurrentPage(searchBar.getLastSelectedUser()).
-                    toString();
+            pages[indexOfCurrentPage].accept(visitor2, searchBar.getLastSelectedUser());
+
+            return pages[indexOfCurrentPage].accept(visitor1,
+                    searchBar.getLastSelectedUser()).toString();
         } else {
-            return pages[indexOfCurrentPage].printCurrentPage(this).toString();
+            pages[indexOfCurrentPage].accept(visitor2, this);
+            return pages[indexOfCurrentPage].accept(visitor1, this).toString();
         }
     }
 
