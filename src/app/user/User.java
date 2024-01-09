@@ -4,11 +4,11 @@ import app.Pages.Page;
 import app.audio.Collections.*;
 import app.audio.Files.Song;
 import app.player.Player;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * The type User.
@@ -33,6 +33,24 @@ public abstract class User {
         this.city = city;
         pages = new Page[2 + 2];
         indexOfCurrentPage = 0;
+    }
+
+    public HashMap<String, Integer> getTop5Entries(HashMap<String, Integer> map) {
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(map.entrySet());
+
+        entryList.sort(
+                Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
+                        .thenComparing(Map.Entry.comparingByKey())
+        );
+
+        LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+        List<Map.Entry<String, Integer>> top5EntryList = entryList.subList(0, Math.min(5, entryList.size()));
+
+        for (Map.Entry<String, Integer> entry : top5EntryList) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
     }
 
     /**
@@ -198,6 +216,12 @@ public abstract class User {
     public int getTotalLikes() {
         return 0;
     }
+
+    /**
+     * abstract method meant to be called in this class extenders, so
+     * it an act different for every one of them
+     */
+    public ObjectNode getWrapped() {return null;}
 
     public final String getUsername() {
         return username;

@@ -6,6 +6,8 @@ import app.audio.Collections.Playlist;
 import app.audio.Collections.Podcast;
 import app.audio.Files.Song;
 import app.player.Player;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
@@ -19,7 +21,10 @@ public class ArtistUser extends User {
     private ArrayList<Album> albums;
     private ArrayList<Merch> merches;
     private ArrayList<Event> events;
-
+    private HashMap<String, Integer> topAlbums;
+    private HashMap<String, Integer> topSongs;
+    private HashMap<String, Integer> topFans;
+    private Set<String> listeners;
 
     public ArtistUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -27,6 +32,10 @@ public class ArtistUser extends User {
         merches = new ArrayList<>();
         events = new ArrayList<>();
         totalLikes = 0;
+        topAlbums = new HashMap<>();
+        topSongs = new HashMap<>();
+        topFans = new HashMap<>();
+        listeners = new HashSet<>();
     }
 
     /**
@@ -292,6 +301,66 @@ public class ArtistUser extends User {
                 totalLikes += song.getLikes();
             }
         }
+    }
+
+    /**
+     * increments the number of listens of the given song
+     * @param songName the name of the song
+     */
+    public void incrementSong(final String songName) {
+        if (topSongs.containsKey(songName)) {
+            topSongs.put(songName, topSongs.get(songName) + 1);
+        } else {
+            topSongs.put(songName, 1);
+        }
+    }
+
+    /**
+     * increments the number of listens of the given album
+     * @param albumName the name of the album
+     */
+    public void incrementAlbum(final String albumName) {
+        if (topAlbums.containsKey(albumName)) {
+            topAlbums.put(albumName, topAlbums.get(albumName) + 1);
+        } else {
+            topAlbums.put(albumName, 1);
+        }
+    }
+
+    /**
+     * increments the number of times a given fan has listened
+     * to this artist
+     * @param fanName the name of the fan
+     */
+    public void incrementFan(final String fanName) {
+        topFans.computeIfPresent(fanName, (key, value) -> value + 1);
+        topFans.computeIfAbsent(fanName, key -> 1);
+    }
+
+    /**
+     * adds the name of the listener in the listeners list
+     * by using a set we assure that there are no duplicates
+     * @param listenerName listener
+     */
+    public void addListeners(final String listenerName) {
+        listeners.add(listenerName);
+    }
+
+    /**
+     * gets all the wrapped info
+     *
+     * @return the node with set info
+     */
+    public ObjectNode getWrapped() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+
+        result.put("topAlbums", objectMapper.valueToTree(getTop5Entries(topAlbums)));
+        result.put("topSongs", objectMapper.valueToTree(getTop5Entries(topSongs)));
+        result.put("topFans", objectMapper.valueToTree(getTop5Entries(topFans)));
+        result.put("listeners", listeners.size());
+
+        return result;
     }
 
     /**

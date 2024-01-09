@@ -1,8 +1,10 @@
 package app.player;
 
+import app.Admin;
 import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.audio.LibraryEntry;
+import app.user.NormalUser;
 import app.utils.Enums;
 
 import java.util.ArrayList;
@@ -165,12 +167,13 @@ public final class Player {
      *
      * @param time the time
      */
-    public void simulatePlayer(final int time) {
+    public void simulatePlayer(final int time, NormalUser user) {
         int elapsedTime = time;
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {
                 elapsedTime -= source.getDuration();
                 next();
+                Admin.getInstance().updateUserWrapped(user);
                 if (paused) {
                     break;
                 }

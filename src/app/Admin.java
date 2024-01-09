@@ -9,11 +9,13 @@ import app.user.ArtistUser;
 import app.user.HostUser;
 import app.user.NormalUser;
 import app.user.User;
+import app.utils.Enums;
 import fileio.input.EpisodeInput;
 import fileio.input.PodcastInput;
 import fileio.input.SongInput;
 import fileio.input.UserInput;
 
+import javax.swing.border.EmptyBorder;
 import java.util.*;
 
 /**
@@ -441,6 +443,37 @@ public final class Admin {
         }
 
         return null;
+    }
+
+    /**
+     * updates the wrapped for the given user
+     *
+     * @param user the user that is updated
+     */
+    public void updateUserWrapped(NormalUser user) {
+        if (user.getPlayer().getSource() == null) {
+            return;
+        }
+
+        if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.LIBRARY)
+            ||  user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.ALBUM)) {
+            Song song = (Song) user.getPlayer().getCurrentAudioFile();
+            ArtistUser artistUser = (ArtistUser) getUser(song.getArtist());
+
+            artistUser.incrementSong(song.getName());
+            artistUser.incrementAlbum(song.getAlbum());
+            artistUser.incrementFan(user.getUsername());
+            artistUser.addListeners(user.getUsername());
+
+            user.incrementSong(song.getName());
+            user.incrementGenre(song.getGenre());
+            user.incrementArtist(song.getArtist());
+            user.incrementAlbums(song.getAlbum());
+        }
+
+        if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
+            user.incrementEpisodes();
+        }
     }
 
     /**

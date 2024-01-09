@@ -10,6 +10,12 @@ public final class Enums { // diferite enumuri, le-am gurpat pe toate intr-un lo
    public static final int FIVE = 5;
    public static final int SIX = 6;
    public static final int TEN = 10;
+   public static final int TOP_ARTISTS = 0;
+   public static final int TOP_GENRES = 1;
+   public static final int TOP_SONGS = 2;
+   public static final int TOP_ALBUMS = 3;
+   public static final int TOP_EPISODES = 4;
+
 
    private Enums() { }
     public enum Genre {

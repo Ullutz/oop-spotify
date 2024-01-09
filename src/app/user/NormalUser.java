@@ -14,6 +14,9 @@ import app.player.PlayerStats;
 import app.searchBar.Filters;
 import app.searchBar.SearchBar;
 import app.utils.Enums;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.jdi.connect.Connector;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
@@ -27,6 +30,11 @@ public class NormalUser extends User {
     private final SearchBar searchBar;
     private boolean lastSearched;
     private boolean connectionStatus;
+    private HashMap<String, Integer> topArtists;
+    private HashMap<String, Integer> topGenres;
+    private HashMap<String, Integer> topSongs;
+    private HashMap<String, Integer> topAlbums;
+    private HashMap<String, Integer> topEpisodes;
 
     public NormalUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -41,6 +49,11 @@ public class NormalUser extends User {
         pages[1] = new LikedContentPage();
         pages[2] = new ArtistPage();
         pages[2 + 1] = new HostPage();
+        topArtists = new HashMap<>();
+        topGenres = new HashMap<>();
+        topSongs = new HashMap<>();
+        topAlbums = new HashMap<>();
+        topEpisodes = new HashMap<>();
     }
 
     /**
@@ -153,6 +166,7 @@ public class NormalUser extends User {
 
         player.pause();
 
+        Admin.getInstance().updateUserWrapped(this);
         return "Playback loaded successfully.";
     }
 
@@ -785,7 +799,77 @@ public class NormalUser extends User {
      * @param time the time
      */
     public void simulateTime(final int time) {
-        player.simulatePlayer(time);
+        player.simulatePlayer(time, this);
+    }
+
+    /**
+     * updates the song hashmap
+     *
+     * @param songName the name of the song
+     */
+    public void incrementSong(final String songName) {
+        if (topSongs.containsKey(songName)) {
+            topSongs.put(songName, topSongs.get(songName) + 1);
+        } else {
+            topSongs.put(songName, 1);
+        }
+    }
+
+    /**
+     * updates the artist hashmap
+     *
+     * @param artistName the name of the artist
+     */
+    public void incrementArtist(final String artistName) {
+        if (topArtists.containsKey(artistName)) {
+            topArtists.put(artistName, topArtists.get(artistName) + 1);
+        } else {
+            topArtists.put(artistName, 1);
+        }
+    }
+
+    /**
+     * updates the genre hashmap
+     *
+     * @param genreName the genre name
+     */
+    public void incrementGenre(final String genreName) {
+        if (topGenres.containsKey(genreName)) {
+            topGenres.put(genreName, topGenres.get(genreName) + 1);
+        } else {
+            topGenres.put(genreName, 1);
+        }
+    }
+
+    /**
+     * updates the albums hashmap
+     *
+     * @param albumName the name of the album
+     */
+    public void incrementAlbums(final String albumName) {
+        if (topAlbums.containsKey(albumName)) {
+            topAlbums.put(albumName, topAlbums.get(albumName) + 1);
+        } else {
+            topAlbums.put(albumName, 1);
+        }
+    }
+
+    public void incrementEpisodes() {
+        topEpisodes.computeIfPresent(player.getCurrentAudioFile().getName(), (key, value) -> value + 1);
+        topEpisodes.computeIfAbsent(player.getCurrentAudioFile().getName(), key -> 1);
+    }
+
+    public ObjectNode getWrapped() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = new ObjectMapper().createObjectNode();
+
+        result.put("topArtists", objectMapper.valueToTree(getTop5Entries(topArtists)));
+        result.put("topGenres", objectMapper.valueToTree(getTop5Entries(topGenres)));
+        result.put("topSongs", objectMapper.valueToTree(getTop5Entries(topSongs)));
+        result.put("topAlbums", objectMapper.valueToTree(getTop5Entries(topAlbums)));
+        result.put("topEpisodes", objectMapper.valueToTree(getTop5Entries(topEpisodes)));
+
+        return result;
     }
 
     public final boolean isConnectionStatus() {
