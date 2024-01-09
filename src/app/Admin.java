@@ -473,15 +473,18 @@ public final class Admin {
         }
 
         if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
+            System.out.println(timestamp);
             Episode episode = (Episode) user.getPlayer().getCurrentAudioFile();
             Podcast podcast = (Podcast) user.getPlayer().getSource().getAudioCollection();
             HostUser hostUser = (HostUser) getUser(podcast.getOwner());
 
             user.incrementEpisodes(episode.getName());
 
-            hostUser.incrementTopEpisodes(episode.getName());
-            hostUser.incrementListeners(user.getUsername());
-            hostUser.setListened(true);
+            if (hostUser != null) {
+                hostUser.incrementTopEpisodes(episode.getName());
+                hostUser.incrementListeners(user.getUsername());
+                hostUser.setListened(true);
+            }
         }
     }
 
@@ -494,10 +497,12 @@ public final class Admin {
         List<User> sortedList = new ArrayList<>();
 
         for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
-            if (((ArtistUser) users.get(i)).isListened()) {
+            if (((ArtistUser) users.get(i)).isListened()
+                    || ((ArtistUser) users.get(i)).isSoldMerch()) {
                 sortedList.add(users.get(i));
             }
         }
+
         sortedList.sort(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {

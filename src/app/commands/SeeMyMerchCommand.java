@@ -15,7 +15,7 @@ public class SeeMyMerchCommand implements Command {
         ObjectNode obj = objectMapper.createObjectNode();
 
         obj.put("command", commandInput.getCommand());
-        obj.put("username", commandInput.getUsername());
+        obj.put("user", commandInput.getUsername());
         obj.put("timestamp", commandInput.getTimestamp());
 
         if (user == null) {

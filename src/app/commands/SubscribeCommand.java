@@ -6,18 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
-public class BuyMerchCommand implements Command {
+public class SubscribeCommand implements Command {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public ObjectNode execute(CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-        String message;
+        String message = null;
 
         if (user == null) {
             message = "The username " + commandInput.getUsername() + " doesn't exist.";
         } else {
-            message = user.buyMerch(commandInput.getName());
+            message = user.subscribe();
         }
 
         ObjectNode obj = objectMapper.createObjectNode();

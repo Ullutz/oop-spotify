@@ -24,16 +24,14 @@ public class EndProgram implements Command {
         for (User artistUser : artists) {
             ArtistUser artist = (ArtistUser) artistUser;
 
-            if (artist.isListened()) {
-                ObjectNode artistInfo = objectMapper.createObjectNode();
+            ObjectNode artistInfo = objectMapper.createObjectNode();
 
-                artistInfo.put("songRevenue", artist.getSongRevenue());
-                artistInfo.put("merchRevenue", artist.getMerchRevenue());
-                artistInfo.put("ranking", artist.getRanking());
-                artistInfo.put("mostProfitableSong", artist.getMostProfitableSong());
+            artistInfo.put("songRevenue", artist.getSongRevenue());
+            artistInfo.put("merchRevenue", artist.getMerchRevenue());
+            artistInfo.put("ranking", artist.getRanking());
+            artistInfo.put("mostProfitableSong", artist.getMostProfitableSong());
 
-                result.put(artist.getUsername(), artistInfo);
-            }
+            result.put(artist.getUsername(), artistInfo);
         }
 
         obj.put("result", result);

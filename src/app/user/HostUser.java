@@ -20,6 +20,7 @@ public class HostUser extends User {
     private HashMap<String, Integer> topEpisodes;
     private HashSet<String> listeners;
     private boolean isListened;
+    private ArrayList<User> subscribers;
 
 
     public HostUser(final String username, final int age, final String city) {
@@ -29,6 +30,7 @@ public class HostUser extends User {
         topEpisodes = new HashMap<>();
         listeners = new HashSet<>();
         isListened = false;
+        subscribers = new ArrayList<>();
     }
 
     /**
@@ -52,11 +54,16 @@ public class HostUser extends User {
                 return getUsername() + " has the same episode in this podcast.";
             }
         }
+
         List<Episode> episodeList = new ArrayList<>();
         for (EpisodeInput episodeInput : episodes) {
             episodeList.add(new Episode(episodeInput.getName(),
                     episodeInput.getDuration(),
                     episodeInput.getDescription()));
+        }
+
+        for (User user : subscribers) {
+            user.update("New Podcast", "New Podcast from " + getUsername() + ".");
         }
 
         podcasts.add(new Podcast(name, getUsername(), episodeList));
@@ -115,6 +122,10 @@ public class HostUser extends User {
             if (announcement.getName().equals(name)) {
                 return getUsername() + " has already added an announcement with the same name.";
             }
+        }
+
+        for (User user : subscribers) {
+            user.update("New Announcement", "New Announcement from " + getUsername() + ".");
         }
 
         announcements.add(new Announcement(name, description));
@@ -368,6 +379,14 @@ public class HostUser extends User {
     }
 
     @Override
+    public void update(String name, String description) { }
+
+    @Override
+    public String subscribe() {
+        return null;
+    }
+
+    @Override
     public final ArrayList<Podcast> getPodcasts() {
         return podcasts;
     }
@@ -391,5 +410,13 @@ public class HostUser extends User {
 
     public void setListened(boolean listened) {
         isListened = listened;
+    }
+
+    public ArrayList<User> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(ArrayList<User> subscribers) {
+        this.subscribers = subscribers;
     }
 }

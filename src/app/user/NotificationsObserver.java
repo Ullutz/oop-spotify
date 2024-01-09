@@ -1,5 +1,5 @@
 package app.user;
 
 public interface NotificationsObserver {
-    void update();
+    void update(final String name, final String description);
 }

@@ -76,7 +76,7 @@ public final class Main {
                         + "library/library.json"),
                 LibraryInput.class);
         CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + "test03_etapa3_wrapped_n_user_n_artist.json"),
+                        + "test10_etapa3_wrapped_host.json"),
                 CommandInput[].class);
         ArrayNode outputs = objectMapper.createArrayNode();
 
@@ -85,6 +85,9 @@ public final class Main {
         Admin.getInstance().setPodcast(library.getPodcasts());
 
         for (CommandInput command : commands) {
+            if (command.getTimestamp() == 3225) {
+                System.out.println("here");
+            }
             Admin.getInstance().updateTimestamp(command.getTimestamp());
 
             String commandName = command.getCommand();
@@ -162,6 +165,14 @@ public final class Main {
                     outputs.add(new GetTop5AlbumsCommand().execute(command));
                 case "wrapped" ->
                     outputs.add(new WrappedCommand().execute(command));
+                case "subscribe" ->
+                    outputs.add(new SubscribeCommand().execute(command));
+                case "getNotifications" ->
+                    outputs.add(new GetNotificastionsCommand().execute(command));
+                case "buyMerch" ->
+                    outputs.add(new BuyMerchCommand().execute(command));
+                case "seeMerch" ->
+                    outputs.add(new SeeMyMerchCommand().execute(command));
                 default -> System.out.println("Invalid command " + commandName);
             }
         }

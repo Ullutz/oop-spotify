@@ -1,5 +1,6 @@
 package app.user;
 
+import app.notification.Notifications;
 import app.pages.Page;
 import app.audio.Collections.*;
 import app.audio.Files.Song;
@@ -234,6 +235,30 @@ public abstract class User implements NotificationsObserver {
      * it an act different for every one of them
      */
     public abstract ArrayList<String> seeMyMerch();
+
+    /**
+     * abstract method meant to be called in this class extenders, so
+     * it an act different for every one of them
+     */
+    public abstract String subscribe();
+
+    /**
+     * abstract method meant to be called in this class extenders, so
+     * it an act different for every one of them
+     */
+    public abstract ArrayList<User> getSubscribers();
+
+    public String buyPremium() {
+        return username + " is not a normal user.";
+    }
+
+    public String cancelPremium() {
+        return username + " is not a normal user.";
+    }
+
+    public ArrayList<Notifications> getNotifications() {
+        return null;
+    }
     public final String getUsername() {
         return username;
     }

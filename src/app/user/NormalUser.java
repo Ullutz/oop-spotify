@@ -61,6 +61,7 @@ public class NormalUser extends User {
         topEpisodes = new HashMap<>();
         boughtMerch = new ArrayList<>();
         premiumSubscription = false;
+        notificationBar = new ArrayList<>();
     }
 
     /**
@@ -480,7 +481,7 @@ public class NormalUser extends User {
 
         followedPlaylists.add(playlist);
 
-        playlist.getOwner().update();
+        Admin.getInstance().getUser(playlist.getOwner()).update("New follower", "New follower");
 
         followedPlaylists.sort(new Comparator<Playlist>() {
             @Override
@@ -920,13 +921,86 @@ public class NormalUser extends User {
         boughtMerch.add(wantedMerch.getName());
 
         artistUser.setMerchRevenue(artistUser.getMerchRevenue() + wantedMerch.getPrice());
+        artistUser.setSoldMerch(true);
 
         return getUsername() + " has added new merch successfully.";
     }
 
     @Override
-    public void update() {
+    public String subscribe() {
+        if (indexOfCurrentPage != ARTIST_PAGE && indexOfCurrentPage != HOST_PAGE) {
+            return "To subscribe you need to be on the page of an artist or host.";
+        }
 
+        User user = Admin.getInstance().getUser(pages[indexOfCurrentPage].getOwner());
+
+        ArrayList<User> subscribers = user.getSubscribers();
+
+        if (subscribers.contains(this)) {
+            subscribers.remove(this);
+            return getUsername() + " unsubscribed from " + user.getUsername() + " successfully.";
+        }
+
+        subscribers.add(this);
+        return getUsername() + " subscribed to " + user.getUsername() + " successfully.";
+    }
+
+    /**
+     * update method to add a notification when needed
+     *
+     * @param name the name f the notification
+     * @param description the description
+     */
+    @Override
+    public void update(final String name, final String description) {
+        notificationBar.add(new Notifications(name, description));
+    }
+
+    public ArrayList<User> getSubscribers() {
+        return null;
+    }
+
+    /**
+     * buys the premium subscription
+     *
+     * @return a message
+     */
+    @Override
+    public String buyPremium() {
+        if (premiumSubscription) {
+            return getUsername() + " is already a premium user.";
+        }
+
+        premiumSubscription = true;
+        return getUsername() + " bought the subscription successfully.";
+    }
+
+    /**
+     * cancel the premium subscription of an user
+     *
+     * @return a message
+     */
+    @Override
+    public String cancelPremium() {
+        if (!premiumSubscription) {
+            return getUsername() + " is not a premium user.";
+        }
+
+        premiumSubscription = false;
+        return getUsername() + " cancelled the subscription successfully.";
+    }
+
+    /**
+     * gets all the notifications and clear the notifications bar
+     *
+     * @return a list of notifications
+     */
+    public ArrayList<Notifications> getNotifications() {
+        ArrayList<Notifications> copy = new ArrayList<>(notificationBar);
+
+        notificationBar.clear();
+
+        return copy;
     }
 
     /**

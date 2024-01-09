@@ -30,6 +30,8 @@ public class ArtistUser extends User {
     private int ranking;
     private String mostProfitableSong;
     private boolean listened;
+    private ArrayList<User> subscribers;
+    private boolean soldMerch;
 
     public ArtistUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -43,6 +45,8 @@ public class ArtistUser extends User {
         listeners = new HashSet<>();
         mostProfitableSong = "N/A";
         listened = false;
+        subscribers = new ArrayList<>();
+        soldMerch = false;
     }
 
     /**
@@ -86,6 +90,10 @@ public class ArtistUser extends User {
                     songInput.getAlbum(), songInput.getTags(), songInput.getLyrics(),
                     songInput.getGenre(), songInput.getReleaseYear(), songInput.getArtist());
             album.getSongs().add(song);
+        }
+
+        for (User user : subscribers) {
+            user.update("New Album", "New Album from " + getUsername() + ".");
         }
 
         albums.add(album);
@@ -170,6 +178,10 @@ public class ArtistUser extends User {
             return "Event for " + getUsername() + " does not have a valid date.";
         }
 
+        for (User user : subscribers) {
+            user.update("New Event", "New Event from " + getUsername() + ".");
+        }
+
         events.add(new Event(name, description, date));
 
         return getUsername() + " has added new event successfully.";
@@ -223,6 +235,10 @@ public class ArtistUser extends User {
 
         if (price < 0) {
             return "Price for merchandise can not be negative.";
+        }
+
+        for (User user : subscribers) {
+            user.update("New Merchandise", "New Merchandise from " + getUsername() + ".");
         }
 
         Merch merch = new Merch(name, description, price);
@@ -488,6 +504,14 @@ public class ArtistUser extends User {
         return getUsername() + " is not a normal user.";
     }
 
+    @Override
+    public void update(String name, String description) { }
+
+    @Override
+    public String subscribe() {
+        return null;
+    }
+
     public final ArrayList<Album> getAlbums() {
         return albums;
     }
@@ -559,5 +583,21 @@ public class ArtistUser extends User {
 
     public void setListened(boolean listened) {
         this.listened = listened;
+    }
+
+    public ArrayList<User> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(ArrayList<User> subscribers) {
+        this.subscribers = subscribers;
+    }
+
+    public boolean isSoldMerch() {
+        return soldMerch;
+    }
+
+    public void setSoldMerch(boolean soldMerch) {
+        this.soldMerch = soldMerch;
     }
 }
