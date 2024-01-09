@@ -7,6 +7,8 @@ import app.audio.Collections.Podcast;
 import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.player.Player;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
@@ -15,12 +17,18 @@ import java.util.*;
 public class HostUser extends User {
     private ArrayList<Podcast> podcasts;
     private ArrayList<Announcement> announcements;
+    private HashMap<String, Integer> topEpisodes;
+    private HashSet<String> listeners;
+    private boolean isListened;
 
 
     public HostUser(final String username, final int age, final String city) {
         super(username, age, city);
         announcements = new ArrayList<>();
         podcasts = new ArrayList<>();
+        topEpisodes = new HashMap<>();
+        listeners = new HashSet<>();
+        isListened = false;
     }
 
     /**
@@ -190,6 +198,57 @@ public class HostUser extends User {
         return getUsername() + " was successfully deleted.";
     }
 
+    /**
+     * increments the number of listens that this episode has
+     *
+     * @param episodeName the name of the episode
+     */
+    public void incrementTopEpisodes(final String episodeName) {
+        if (topEpisodes.containsKey(episodeName)) {
+            topEpisodes.put(episodeName, topEpisodes.get(episodeName) + 1);
+        } else {
+            topEpisodes.put(episodeName, 1);
+        }
+    }
+
+    /**
+     * adds the username to the listeners set, so they don't appear twice
+     *
+     * @param userName the username
+     */
+    public void incrementListeners(final String userName) {
+        listeners.add(userName);
+    }
+
+    /**
+     * gets all the wrapped info
+     *
+     * @return the node with the info
+     */
+    public ObjectNode getWrapped() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+
+        if (!isListened()) {
+            return null;
+        }
+
+        result.put("topEpisodes", objectMapper.valueToTree(getTop5Entries(topEpisodes)));
+        result.put("listeners", listeners.size());
+
+        return result;
+    }
+
+    @Override
+    public String buyMerch(String merchName) {
+        return getUsername() + " is not a normal user.";
+    }
+
+    @Override
+    public ArrayList<String> seeMyMerch() {
+        return null;
+    }
+
     @Override
     public void calculateTotalLikes() { }
 
@@ -324,5 +383,13 @@ public class HostUser extends User {
 
     public final void setAnnouncements(final ArrayList<Announcement> announcements) {
         this.announcements = announcements;
+    }
+
+    public boolean isListened() {
+        return isListened;
+    }
+
+    public void setListened(boolean listened) {
+        isListened = listened;
     }
 }

@@ -25,6 +25,11 @@ public class ArtistUser extends User {
     private HashMap<String, Integer> topSongs;
     private HashMap<String, Integer> topFans;
     private Set<String> listeners;
+    private float songRevenue;
+    private float merchRevenue;
+    private int ranking;
+    private String mostProfitableSong;
+    private boolean listened;
 
     public ArtistUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -36,6 +41,8 @@ public class ArtistUser extends User {
         topSongs = new HashMap<>();
         topFans = new HashMap<>();
         listeners = new HashSet<>();
+        mostProfitableSong = "N/A";
+        listened = false;
     }
 
     /**
@@ -354,13 +361,32 @@ public class ArtistUser extends User {
     public ObjectNode getWrapped() {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
+        List<String> fans = new ArrayList<>();
+
+        if (!isListened()) {
+            return null;
+        }
+
+        for (Map.Entry<String, Integer> entry : getTop5Entries(topFans).entrySet()) {
+            fans.add(entry.getKey());
+        }
 
         result.put("topAlbums", objectMapper.valueToTree(getTop5Entries(topAlbums)));
         result.put("topSongs", objectMapper.valueToTree(getTop5Entries(topSongs)));
-        result.put("topFans", objectMapper.valueToTree(getTop5Entries(topFans)));
+        result.put("topFans", objectMapper.valueToTree(fans));
         result.put("listeners", listeners.size());
 
         return result;
+    }
+
+    @Override
+    public String buyMerch(String merchName) {
+        return getUsername() + " is not a normal user.";
+    }
+
+    @Override
+    public ArrayList<String> seeMyMerch() {
+        return null;
     }
 
     /**
@@ -493,5 +519,45 @@ public class ArtistUser extends User {
 
     public final void setTotalLikes(final int totalLikes) {
         this.totalLikes = totalLikes;
+    }
+
+    public float getSongRevenue() {
+        return songRevenue;
+    }
+
+    public void setSongRevenue(float songRevenue) {
+        this.songRevenue = songRevenue;
+    }
+
+    public float getMerchRevenue() {
+        return merchRevenue;
+    }
+
+    public void setMerchRevenue(float merchRevenue) {
+        this.merchRevenue = merchRevenue;
+    }
+
+    public int getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
+    }
+
+    public String getMostProfitableSong() {
+        return mostProfitableSong;
+    }
+
+    public void setMostProfitableSong(String mostProfitableSong) {
+        this.mostProfitableSong = mostProfitableSong;
+    }
+
+    public boolean isListened() {
+        return listened;
+    }
+
+    public void setListened(boolean listened) {
+        this.listened = listened;
     }
 }

@@ -1,6 +1,6 @@
 package app.user;
 
-import app.Pages.Page;
+import app.pages.Page;
 import app.audio.Collections.*;
 import app.audio.Files.Song;
 import app.player.Player;
@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * The type User.
  */
-public abstract class User {
+public abstract class User implements NotificationsObserver {
     private String username;
     private int age;
     private String city;
@@ -223,6 +223,17 @@ public abstract class User {
      */
     public ObjectNode getWrapped() {return null;}
 
+    /**
+     * abstract method meant to be called in this class extenders, so
+     * it an act different for every one of them
+     */
+    public abstract String buyMerch(final String merchName);
+
+    /**
+     * abstract method meant to be called in this class extenders, so
+     * it an act different for every one of them
+     */
+    public abstract ArrayList<String> seeMyMerch();
     public final String getUsername() {
         return username;
     }

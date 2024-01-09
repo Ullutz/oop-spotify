@@ -1,10 +1,11 @@
 package app.user;
 
 import app.Admin;
-import app.Pages.*;
-import app.Pages.Visitor.PrintPageVisitor;
-import app.Pages.Visitor.UpdatePageVisitor;
-import app.Pages.Visitor.Visitor;
+import app.notification.Notifications;
+import app.pages.*;
+import app.pages.Visitor.PrintPageVisitor;
+import app.pages.Visitor.UpdatePageVisitor;
+import app.pages.Visitor.Visitor;
 import app.audio.Collections.*;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
@@ -16,11 +17,12 @@ import app.searchBar.SearchBar;
 import app.utils.Enums;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.jdi.connect.Connector;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
 import java.util.*;
+
+import static app.utils.Enums.*;
 
 public class NormalUser extends User {
     private ArrayList<Playlist> playlists;
@@ -35,6 +37,9 @@ public class NormalUser extends User {
     private HashMap<String, Integer> topSongs;
     private HashMap<String, Integer> topAlbums;
     private HashMap<String, Integer> topEpisodes;
+    private ArrayList<String> boughtMerch;
+    private boolean premiumSubscription;
+    private ArrayList<Notifications> notificationBar;
 
     public NormalUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -45,15 +50,17 @@ public class NormalUser extends User {
         player = new Player();
         searchBar = new SearchBar(username);
         lastSearched = false;
-        pages[0] = new HomePage();
-        pages[1] = new LikedContentPage();
-        pages[2] = new ArtistPage();
-        pages[2 + 1] = new HostPage();
+        pages[HOME_PAGE] = new HomePage();
+        pages[LIKED_CONTENT_PAGE] = new LikedContentPage();
+        pages[ARTIST_PAGE] = new ArtistPage();
+        pages[HOST_PAGE] = new HostPage();
         topArtists = new HashMap<>();
         topGenres = new HashMap<>();
         topSongs = new HashMap<>();
         topAlbums = new HashMap<>();
         topEpisodes = new HashMap<>();
+        boughtMerch = new ArrayList<>();
+        premiumSubscription = false;
     }
 
     /**
@@ -473,6 +480,8 @@ public class NormalUser extends User {
 
         followedPlaylists.add(playlist);
 
+        playlist.getOwner().update();
+
         followedPlaylists.sort(new Comparator<Playlist>() {
             @Override
             public int compare(final Playlist o1, final Playlist o2) {
@@ -603,18 +612,18 @@ public class NormalUser extends User {
 
         switch (page) {
             case "Home" -> {
-                indexOfCurrentPage = 0;
+                indexOfCurrentPage = HOME_PAGE;
                 message = getUsername() + " accessed Home successfully.";
             }
             case "LikedContent" -> {
-                indexOfCurrentPage = 1;
+                indexOfCurrentPage = LIKED_CONTENT_PAGE;
                 message = getUsername() + " accessed LikedContent successfully.";
             }
             case "ArtistPage" -> {
-                indexOfCurrentPage = 2;
+                indexOfCurrentPage = ARTIST_PAGE;
             }
             case "HostPage" -> {
-                indexOfCurrentPage = 2 + 1;
+                indexOfCurrentPage = HOST_PAGE;
             }
             default -> { }
         }
@@ -854,14 +863,32 @@ public class NormalUser extends User {
         }
     }
 
-    public void incrementEpisodes() {
-        topEpisodes.computeIfPresent(player.getCurrentAudioFile().getName(), (key, value) -> value + 1);
-        topEpisodes.computeIfAbsent(player.getCurrentAudioFile().getName(), key -> 1);
+    /**
+     * updates the episodes hashmap
+     *
+     * @param episodeName the name of the episode
+     */
+    public void incrementEpisodes(final String episodeName) {
+        if (topEpisodes.containsKey(episodeName)) {
+            topEpisodes.put(episodeName, topEpisodes.get(episodeName) + 1);
+        } else {
+            topEpisodes.put(episodeName, 1);
+        }
     }
 
+    /**
+     * gets all the wrapped info
+     *
+     * @return the json node with all the info
+     */
     public ObjectNode getWrapped() {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = new ObjectMapper().createObjectNode();
+
+        if (topArtists.isEmpty() && topGenres.isEmpty() && topAlbums.isEmpty()
+                && topSongs.isEmpty() && topEpisodes.isEmpty()) {
+            return null;
+        }
 
         result.put("topArtists", objectMapper.valueToTree(getTop5Entries(topArtists)));
         result.put("topGenres", objectMapper.valueToTree(getTop5Entries(topGenres)));
@@ -870,6 +897,45 @@ public class NormalUser extends User {
         result.put("topEpisodes", objectMapper.valueToTree(getTop5Entries(topEpisodes)));
 
         return result;
+    }
+
+    @Override
+    public String buyMerch(final String merchName) {
+        if (indexOfCurrentPage != ARTIST_PAGE) {
+            return "Cannot buy merch from this page.";
+        }
+
+        Merch wantedMerch = null;
+
+        ArtistUser artistUser = (ArtistUser) Admin.getInstance().getUser(pages[indexOfCurrentPage].getOwner());
+        for (Merch merch : artistUser.getMerches()) {
+            if (merch.getName().equals(merchName))
+                wantedMerch = merch;
+        }
+
+        if (wantedMerch == null) {
+            return "The merch " + merchName + " doesn't exist.";
+        }
+
+        boughtMerch.add(wantedMerch.getName());
+
+        artistUser.setMerchRevenue(artistUser.getMerchRevenue() + wantedMerch.getPrice());
+
+        return getUsername() + " has added new merch successfully.";
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    /**
+     * gets a list with all the merches bought by this user
+     *
+     * @return the list
+     */
+    public ArrayList<String> seeMyMerch() {
+        return boughtMerch;
     }
 
     public final boolean isConnectionStatus() {

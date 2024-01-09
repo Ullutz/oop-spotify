@@ -1,7 +1,7 @@
 package main;
 
 import app.Admin;
-import app.Commands.*;
+import app.commands.*;
 import checker.Checker;
 import checker.CheckerConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLOutput;
 import java.util.Objects;
 
 /**
@@ -77,7 +76,7 @@ public final class Main {
                         + "library/library.json"),
                 LibraryInput.class);
         CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + "test00_etapa3_wrapped_one_user_one_artist.json"),
+                        + "test03_etapa3_wrapped_n_user_n_artist.json"),
                 CommandInput[].class);
         ArrayNode outputs = objectMapper.createArrayNode();
 
@@ -86,9 +85,6 @@ public final class Main {
         Admin.getInstance().setPodcast(library.getPodcasts());
 
         for (CommandInput command : commands) {
-            if (command.getTimestamp() == 12393) {
-                System.out.println("caf");
-            }
             Admin.getInstance().updateTimestamp(command.getTimestamp());
 
             String commandName = command.getCommand();
@@ -169,6 +165,8 @@ public final class Main {
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
+
+        outputs.add(new EndProgram().execute(new CommandInput()));
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), outputs);

@@ -464,6 +464,7 @@ public final class Admin {
             artistUser.incrementAlbum(song.getAlbum());
             artistUser.incrementFan(user.getUsername());
             artistUser.addListeners(user.getUsername());
+            artistUser.setListened(true);
 
             user.incrementSong(song.getName());
             user.incrementGenre(song.getGenre());
@@ -472,8 +473,55 @@ public final class Admin {
         }
 
         if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
-            user.incrementEpisodes();
+            Episode episode = (Episode) user.getPlayer().getCurrentAudioFile();
+            Podcast podcast = (Podcast) user.getPlayer().getSource().getAudioCollection();
+            HostUser hostUser = (HostUser) getUser(podcast.getOwner());
+
+            user.incrementEpisodes(episode.getName());
+
+            hostUser.incrementTopEpisodes(episode.getName());
+            hostUser.incrementListeners(user.getUsername());
+            hostUser.setListened(true);
         }
+    }
+
+    /**
+     * calculates the rankings for all the artists
+     *
+     * @return the list of sorted artists by the ranking and name
+     */
+    public List<User> setUpArtistRankings() {
+        List<User> sortedList = new ArrayList<>();
+
+        for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
+            if (((ArtistUser) users.get(i)).isListened()) {
+                sortedList.add(users.get(i));
+            }
+        }
+        sortedList.sort(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                float revenue1 = ((ArtistUser) o1).getSongRevenue() +
+                        ((ArtistUser) o1).getMerchRevenue();
+
+                float revenue2 = ((ArtistUser) o2).getSongRevenue() +
+                        ((ArtistUser) o2).getMerchRevenue();
+
+                if (revenue2 - revenue1 > 0)
+                    return 1;
+
+                if (revenue2 - revenue1 < 0)
+                    return -1;
+
+                return o1.getUsername().compareTo(o2.getUsername());
+            }
+        });
+
+        for (int i = 0; i < sortedList.size(); i++) {
+            ((ArtistUser) sortedList.get(i)).setRanking(i + 1);
+        }
+
+        return sortedList;
     }
 
     /**
