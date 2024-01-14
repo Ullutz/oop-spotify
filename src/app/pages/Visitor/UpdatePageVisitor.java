@@ -88,6 +88,7 @@ public class UpdatePageVisitor implements Visitor {
                 return o2.getLikes() - o1.getLikes();
             }
         });
+
         for (int i = 0; i < MAX && i < user.getLikedSongs().size(); i++) {
             page.getFirst5LikedSongs().add(sortedList.get(i));
         }
@@ -105,8 +106,19 @@ public class UpdatePageVisitor implements Visitor {
                 return b - a;
             }
         });
+
         for (int i = 0; i < MAX && i < user.getFollowedPlaylists().size(); i++) {
             page.getTop5LikedPlaylists().add(sortedPlaylists.get(i));
+        }
+
+        if (!page.getSongRecommendations().contains(user.getRecommendedSong())
+            && user.getRecommendedSong() != null) {
+            page.getSongRecommendations().add(user.getRecommendedSong());
+        }
+
+        if (!page.getPlaylistRecommendations().contains(user.getRecommendedPlaylist())
+            && user.getRecommendedPlaylist() != null) {
+            page.getPlaylistRecommendations().add(user.getRecommendedPlaylist());
         }
 
         return null;

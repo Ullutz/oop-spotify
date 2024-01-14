@@ -8,7 +8,10 @@ import app.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static app.utils.Enums.LIKED_CONTENT_PAGE;
+
 public class LikedContentPage implements Page {
+    private final int TYPE = LIKED_CONTENT_PAGE;
     private List<Song> likedSongs = new ArrayList<>();
     private List<Playlist> followedPlaylists = new ArrayList<>();
 
@@ -42,5 +45,9 @@ public class LikedContentPage implements Page {
 
     public final void setFollowedPlaylists(final List<Playlist> followedPlaylists) {
         this.followedPlaylists = followedPlaylists;
+    }
+
+    public final String getType() {
+        return "LikedContent";
     }
 }

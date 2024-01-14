@@ -1,6 +1,7 @@
 package main;
 
 import app.Admin;
+import app.commandFactory.CommandFactory;
 import app.commands.*;
 import checker.Checker;
 import checker.CheckerConstants;
@@ -76,7 +77,7 @@ public final class Main {
                         + "library/library.json"),
                 LibraryInput.class);
         CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + "test10_etapa3_wrapped_host.json"),
+                        + "test04_etapa3_monetization_premium.json"),
                 CommandInput[].class);
         ArrayNode outputs = objectMapper.createArrayNode();
 
@@ -85,96 +86,18 @@ public final class Main {
         Admin.getInstance().setPodcast(library.getPodcasts());
 
         for (CommandInput command : commands) {
-            if (command.getTimestamp() == 3225) {
-                System.out.println("here");
-            }
             Admin.getInstance().updateTimestamp(command.getTimestamp());
 
             String commandName = command.getCommand();
 
-            switch (commandName) {
-                case "search" -> outputs.add((new SearchCommand()).execute(command));
-                case "select" -> outputs.add((new SelectCommand()).execute(command));
-                case "load" -> outputs.add((new LoadCommand()).execute(command));
-                case "playPause" -> outputs.add((new PlayPauseCommand()).execute(command));
-                case "repeat" -> outputs.add((new RepeatCommand()).execute(command));
-                case "shuffle" -> outputs.add((new ShuffleCommand()).execute(command));
-                case "forward" -> outputs.add((new ForwardCommand()).execute(command));
-                case "backward" -> outputs.add((new BackwardCommand()).execute(command));
-                case "like" -> outputs.add((new LikeCommand()).execute(command));
-                case "next" -> outputs.add((new NextCommand()).execute(command));
-                case "prev" -> outputs.add((new PrevCommand()).execute(command));
-                case "createPlaylist" ->
-                        outputs.add((new CreatePlaylistCommand()).execute(command));
-                case "addRemoveInPlaylist" ->
-                        outputs.add((new AddInPlaylistCommand()).execute(command));
-                case "switchVisibility" ->
-                        outputs.add((new SwitchVisibilityCommand()).execute(command));
-                case "showPlaylists" ->
-                        outputs.add((new ShowPlaylistsCommand()).execute(command));
-                case "follow" -> outputs.add((new FollowCommand()).execute(command));
-                case "status" -> outputs.add((new GetStatusCommand()).execute(command));
-                case "showPreferredSongs" ->
-                        outputs.add((new ShowLikedSongsCommand()).execute(command));
-                case "getPreferredGenre" -> {
-                    // outputs.add((new ShowPrefGenreCommand()).execute(command));
-                }
-                case "getTop5Songs" ->
-                        outputs.add((new GetTop5SongsCommand()).execute(command));
-                case "getTop5Playlists" ->
-                        outputs.add((new GetTop5PlaylistsCommand()).execute(command));
-                case "switchConnectionStatus" ->
-                    outputs.add((new SwitchConnectionStatusCommand()).execute(command));
-                case "getOnlineUsers" ->
-                    outputs.add((new GetOnlineUsersCommand()).execute(command));
-                case "addUser" ->
-                    outputs.add((new AddUserCommand()).execute(command));
-                case "getAllUsers" ->
-                    outputs.add((new GetAllUsersCommand()).execute(command));
-                case "addAlbum" ->
-                    outputs.add((new AddAlbumCommand()).execute(command));
-                case "showAlbums" ->
-                    outputs.add(new ShowAlbumCommand().execute(command));
-                case "printCurrentPage" ->
-                    outputs.add(new PrintCurrPageCommand().execute(command));
-                case "addEvent" ->
-                    outputs.add(new AddEventCommand().execute(command));
-                case "removeEvent" ->
-                    outputs.add(new RemoveEventCommand().execute(command));
-                case "addMerch" ->
-                    outputs.add(new AddMerchCommand().execute(command));
-                case "deleteUser" ->
-                    outputs.add(new DeleteUserCommand().execute(command));
-                case "addPodcast" ->
-                    outputs.add(new AddPodcastCommand().execute(command));
-                case "addAnnouncement" ->
-                    outputs.add(new AddAnnouncementCommand().execute(command));
-                case "removeAnnouncement" ->
-                    outputs.add(new RemoveAnnouncementCommand().execute(command));
-                case "showPodcasts" ->
-                    outputs.add(new ShowPodcastsCommand().execute(command));
-                case "changePage" ->
-                    outputs.add(new ChangePageCommand().execute(command));
-                case "removeAlbum" ->
-                    outputs.add(new RemoveAlbumCommand().execute(command));
-                case "removePodcast" ->
-                    outputs.add(new RemovePodcastCommand().execute(command));
-                case "getTop5Artists" ->
-                    outputs.add(new GetTop5ArtistsCommand().execute(command));
-                case "getTop5Albums" ->
-                    outputs.add(new GetTop5AlbumsCommand().execute(command));
-                case "wrapped" ->
-                    outputs.add(new WrappedCommand().execute(command));
-                case "subscribe" ->
-                    outputs.add(new SubscribeCommand().execute(command));
-                case "getNotifications" ->
-                    outputs.add(new GetNotificastionsCommand().execute(command));
-                case "buyMerch" ->
-                    outputs.add(new BuyMerchCommand().execute(command));
-                case "seeMerch" ->
-                    outputs.add(new SeeMyMerchCommand().execute(command));
-                default -> System.out.println("Invalid command " + commandName);
+            Command concreteCommand = CommandFactory.createCommand(commandName);
+
+            if (concreteCommand == null) {
+                System.out.println("Unknown command");
+            } else {
+                outputs.add(concreteCommand.execute(command));
             }
+
         }
 
         outputs.add(new EndProgram().execute(new CommandInput()));

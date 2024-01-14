@@ -9,7 +9,10 @@ import app.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static app.utils.Enums.HOST_PAGE;
+
 public class HostPage implements Page, Visitable {
+    private final int TYPE = HOST_PAGE;
     private String owner;
     private List<Podcast> podcasts = new ArrayList<>();
     private List<Announcement> announcements = new ArrayList<>();
@@ -43,5 +46,9 @@ public class HostPage implements Page, Visitable {
 
     public final void setAnnouncements(final List<Announcement> announcements) {
         this.announcements = announcements;
+    }
+
+    public final String getType() {
+        return "Host";
     }
 }

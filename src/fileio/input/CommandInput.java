@@ -23,6 +23,7 @@ public final class CommandInput {
     private String nextPage; // pentru changePage
     private String date; // pentru addEvent
     private int price; // pentru addMerch
+    private String recommendationType; // pentru update recommendations
 
     public CommandInput() {
     }
@@ -185,6 +186,14 @@ public final class CommandInput {
 
     public void setPrice(final int price) {
         this.price = price;
+    }
+
+    public String getRecommendationType() {
+        return recommendationType;
+    }
+
+    public void setRecommendationType(String recommendationType) {
+        this.recommendationType = recommendationType;
     }
 
     @Override

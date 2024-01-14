@@ -20,7 +20,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
 
+import javax.crypto.spec.PSource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static app.utils.Enums.*;
 
@@ -40,6 +42,12 @@ public class NormalUser extends User {
     private ArrayList<String> boughtMerch;
     private boolean premiumSubscription;
     private ArrayList<Notifications> notificationBar;
+    private ArrayList<Page> pageHistory;
+    private int pageHistoryIndex;
+    private Song recommendedSong;
+    private Playlist recommendedPlaylist;
+    private RecommendationType recommedation;
+    private HashMap<ArtistUser, Integer> listenedWhilePremium;
 
     public NormalUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -62,6 +70,11 @@ public class NormalUser extends User {
         boughtMerch = new ArrayList<>();
         premiumSubscription = false;
         notificationBar = new ArrayList<>();
+        pageHistory = new ArrayList<>();
+        pageHistory.add(pages[0]);
+        pageHistoryIndex = 0;
+        recommedation = RecommendationType.NONE;
+        listenedWhilePremium = new HashMap<>();
     }
 
     /**
@@ -145,10 +158,10 @@ public class NormalUser extends User {
 
         if (searchBar.getLastSearchType().equals("artist")) {
             pages[2].setOwner(selectedUser.getUsername());
-            changePage("ArtistPage");
+            changePage("Artist");
         } else {
             pages[2 + 1].setOwner(selectedUser.getUsername());
-            changePage("HostPage");
+            changePage("Host");
         }
 
         return "Successfully selected %s's page.".formatted(selectedUser.getUsername());
@@ -174,6 +187,17 @@ public class NormalUser extends User {
 
         player.pause();
 
+        if (premiumSubscription) {
+            if (!player.getSource().getType().equals(PlayerSourceType.PODCAST)) {
+                ArtistUser artist = (ArtistUser) Admin.getInstance()
+                        .getUser(((Song) player.getCurrentAudioFile()).getArtist());
+                if (listenedWhilePremium.containsKey(artist)) {
+                    listenedWhilePremium.put(artist, listenedWhilePremium.get(artist) + 1);
+                } else {
+                    listenedWhilePremium.put(artist, 1);
+                }
+            }
+        }
         Admin.getInstance().updateUserWrapped(this);
         return "Playback loaded successfully.";
     }
@@ -591,7 +615,13 @@ public class NormalUser extends User {
         Visitor visitor2 = new UpdatePageVisitor();
 
         if (indexOfCurrentPage > 1) {
-            pages[indexOfCurrentPage].accept(visitor2, searchBar.getLastSelectedUser());
+            User owner = Admin.getInstance().getUser(pageHistory.get(pageHistoryIndex).getOwner());
+
+            if (owner == null) {
+                owner = Admin.getInstance().getUser(player.getSource().getAudioCollection().getOwner());
+            }
+
+            pages[indexOfCurrentPage].accept(visitor2, owner);
 
             return pages[indexOfCurrentPage].accept(visitor1,
                     searchBar.getLastSelectedUser()).toString();
@@ -609,7 +639,7 @@ public class NormalUser extends User {
      */
     @Override
     public String changePage(final String page) {
-        String message = getUsername() + " is trying to access a non-existent page.";
+        String message;
 
         switch (page) {
             case "Home" -> {
@@ -620,15 +650,23 @@ public class NormalUser extends User {
                 indexOfCurrentPage = LIKED_CONTENT_PAGE;
                 message = getUsername() + " accessed LikedContent successfully.";
             }
-            case "ArtistPage" -> {
+            case "Artist" -> {
                 indexOfCurrentPage = ARTIST_PAGE;
+                message = getUsername() + " accessed Artist successfully.";
             }
-            case "HostPage" -> {
+            case "Host" -> {
                 indexOfCurrentPage = HOST_PAGE;
+                message = getUsername() + " accessed Host successfully.";
             }
-            default -> { }
+            default -> {
+                message = getUsername() + " is trying to access a non-existent page.";
+            }
         }
 
+        if (!message.contains("non")) {
+            pageHistory.add(pages[indexOfCurrentPage]);
+            pageHistoryIndex = pageHistory.size() - 1;
+        }
         return message;
     }
 
@@ -987,6 +1025,21 @@ public class NormalUser extends User {
         }
 
         premiumSubscription = false;
+
+        int listenedSongs = listenedWhilePremium.values()
+                .stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        for (Map.Entry<ArtistUser, Integer> entry
+                : listenedWhilePremium.entrySet()) {
+            ArtistUser artist = entry.getKey();
+            int songs = entry.getValue();
+
+            artist.setSongRevenue(Math.round((artist.getSongRevenue() + (float) 1000000 / listenedSongs * songs) / 100) * 100);
+        }
+
+        listenedWhilePremium.clear();
         return getUsername() + " cancelled the subscription successfully.";
     }
 
@@ -1004,6 +1057,69 @@ public class NormalUser extends User {
     }
 
     /**
+     * goes to the next page in the page history list
+     *
+     * @return a message
+     */
+    @Override
+    public String nextPage() {
+        if (pageHistoryIndex == pageHistory.size() - 1) {
+            return "There are no pages left to go forward.";
+        }
+
+        pageHistoryIndex++;
+        switch (pageHistory.get(pageHistoryIndex).getType()) {
+            case "Home " -> {
+                indexOfCurrentPage = HOME_PAGE;
+            }
+            case "LikedContent" -> {
+                indexOfCurrentPage = LIKED_CONTENT_PAGE;
+            }
+            case "Artist" -> {
+                indexOfCurrentPage = ARTIST_PAGE;
+            }
+            case "Host" -> {
+                indexOfCurrentPage = HOST_PAGE;
+            }
+            default -> {
+            }
+        }
+        return "The user " + getUsername() + " has navigated successfully to the next page.";
+    }
+
+    /**
+     * goes to the previous page in the page history list
+     *
+     * @return a message
+     */
+    @Override
+    public String prevPage() {
+        if (pageHistoryIndex == 0) {
+            return "There are no pages left to go back.";
+        }
+
+        pageHistoryIndex--;
+        switch (pageHistory.get(pageHistoryIndex).getType()) {
+            case "Home " -> {
+                indexOfCurrentPage = HOME_PAGE;
+            }
+            case "LikedContent" -> {
+                indexOfCurrentPage = LIKED_CONTENT_PAGE;
+            }
+            case "Artist" -> {
+                indexOfCurrentPage = ARTIST_PAGE;
+            }
+            case "Host" -> {
+                indexOfCurrentPage = HOST_PAGE;
+            }
+            default -> {
+            }
+        }
+
+        return "The user " + getUsername() + " has navigated successfully to the previous page.";
+    }
+
+    /**
      * gets a list with all the merches bought by this user
      *
      * @return the list
@@ -1012,6 +1128,214 @@ public class NormalUser extends User {
         return boughtMerch;
     }
 
+    public Song getRecommendationSong() {
+        String genre = null;
+        int howMuchHasPlayed = player.getSource().getAudioFile().getDuration()
+                - player.getSource().getRemainedDuration();
+
+        if (howMuchHasPlayed >= 30) {
+            genre = ((Song) player.getSource().getAudioFile()).getGenre();
+        } else {
+            return null;
+        }
+
+        List<Song> genreSong = new ArrayList<>();
+
+        for (Song song : Admin.getInstance().getSongs()) {
+            if (song.getGenre().equals(genre)) {
+                genreSong.add(song);
+            }
+        }
+
+        int index = new Random(howMuchHasPlayed).nextInt(genreSong.size());
+
+        return genreSong.get(index);
+    }
+
+    /**
+     * gets a map of the top 3 genres listened by the user
+     *
+     * @return the map
+     */
+    public Map<String, Integer> getTopGenres() {
+        HashMap<String, Integer> listenedGenres = new HashMap<>();
+
+        for (Song song : likedSongs) {
+            if (listenedGenres.containsKey(song.getGenre())) {
+                listenedGenres.put(song.getGenre(), listenedGenres.get(song.getGenre()) + 1);
+            } else {
+                listenedGenres.put(song.getGenre(), 1);
+            }
+        }
+
+        for (Playlist playlist : playlists) {
+            for (Song song : playlist.getSongs()) {
+                if (listenedGenres.containsKey(song.getGenre())) {
+                    listenedGenres.put(song.getGenre(), listenedGenres.get(song.getGenre()) + 1);
+                } else {
+                    listenedGenres.put(song.getGenre(), 1);
+                }
+            }
+        }
+
+        for (Playlist playlist : followedPlaylists) {
+            for (Song song : playlist.getSongs()) {
+                if (listenedGenres.containsKey(song.getGenre())) {
+                    listenedGenres.put(song.getGenre(), listenedGenres.get(song.getGenre()) + 1);
+                } else {
+                    listenedGenres.put(song.getGenre(), 1);
+                }
+            }
+        }
+
+        return listenedGenres.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new));
+    }
+
+    /**
+     * return the playlist formed by the recommendations
+     *
+     * @return the playlisr
+     */
+    public Playlist getPlaylistRecommendation() {
+        Set<String> topListenedGenres = getTopGenres().keySet();
+        int maxInputs = 0;
+        Playlist recommendedPlaylist = new Playlist(getUsername() + "'s recommendations", getUsername());
+
+        Iterator<String> iterator = topListenedGenres.iterator();
+        while (iterator.hasNext() && maxInputs < 3) {
+            String genre = iterator.next();
+
+            List<Song> genreSongs = new ArrayList<>();
+
+            for (Song song : Admin.getInstance().getSongs()) {
+                if (song.getGenre().equals(genre)) {
+                    genreSongs.add(song);
+                }
+            }
+
+            genreSongs.sort(new Comparator<Song>() {
+                @Override
+                public int compare(Song o1, Song o2) {
+                    return o2.getLikes() - o1.getLikes();
+                }
+            });
+
+            switch (maxInputs) {
+                case 0 -> {
+                    for (int i = 0; i < 5; i++) {
+                        recommendedPlaylist.addSong(genreSongs.get(i));
+                    }
+                }
+                case 1 -> {
+                    for (int i = 0; i < 3; i++) {
+                        recommendedPlaylist.addSong(genreSongs.get(i));
+                    }
+                }
+
+                case 2 -> {
+                    for (int i = 0; i < 2; i++) {
+                        recommendedPlaylist.addSong(genreSongs.get(i));
+                    }
+                }
+            }
+
+            maxInputs++;
+        }
+
+        return recommendedPlaylist;
+    }
+
+    public Playlist getRecommendedFansPlaylist() {
+        ArtistUser artist = (ArtistUser) Admin.getInstance().getUser(((Song) player.
+                                            getSource().getAudioFile()).getArtist());
+
+        Playlist fansPlaylist = new Playlist(artist.getUsername() + " Fan Club recommendations"
+                , this.getUsername());
+
+        Map<String, Integer> topFansSorted = artist.getTopFans().entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new));
+
+        List<String> top5Fans = new ArrayList<>(topFansSorted.keySet())
+                                    .subList(0, Math.min(5, topFansSorted.size()));
+
+        for (String username : top5Fans) {
+            NormalUser user = (NormalUser) Admin.getInstance().getUser(username);
+
+            user.getLikedSongs().sort(new Comparator<Song>() {
+                @Override
+                public int compare(Song o1, Song o2) {
+                    return o2.getLikes() - o1.getLikes();
+                }
+            });
+
+            List<Song> top5UserSong = user.getLikedSongs()
+                    .subList(0, Math.min(5, user.getLikedSongs().size()));
+
+            for (Song song : top5UserSong) {
+                fansPlaylist.addSong(song);
+            }
+        }
+
+        return fansPlaylist;
+    }
+
+    /**
+     * updates the recommendations for an user
+     *
+     * @param type type of the recommendation
+     * @return a message
+     */
+    public String updateRecommendations(final String type) {
+        switch (type) {
+            case "random_playlist" -> {
+                recommendedPlaylist = getPlaylistRecommendation();
+                recommedation = RecommendationType.PLAYLIST;
+            }
+            case "random_song" -> {
+                if (getRecommendationSong() == null) {
+                    return "No new recommendations were found.";
+                }
+                recommendedSong = getRecommendationSong();
+                recommedation = RecommendationType.SONG;
+            }
+            default -> {
+                recommendedPlaylist = getRecommendedFansPlaylist();
+                recommedation = RecommendationType.PLAYLIST;
+            }
+        }
+
+        return "The recommendations for user " + getUsername() + " have been updated successfully.";
+    }
+
+    public String loadRecommendations() {
+        if (recommedation.equals(RecommendationType.NONE)) {
+            return "No recommendations available.";
+        }
+
+        if (!isConnectionStatus()) {
+            return getUsername() + " is offline.";
+        }
+
+        if (recommedation.equals(RecommendationType.PLAYLIST)) {
+            player.setSource(recommendedPlaylist, "playlist");
+            player.pause();
+
+            Admin.getInstance().updateUserWrapped(this);
+        } else {
+            player.setSource(recommendedSong, "song");
+            player.pause();
+
+            Admin.getInstance().updateUserWrapped(this);
+        }
+
+        return "Playback loaded successfully.";
+    }
     public final boolean isConnectionStatus() {
         return connectionStatus;
     }
@@ -1059,5 +1383,38 @@ public class NormalUser extends User {
 
     public final void setLastSearched(final boolean lastSearched) {
         this.lastSearched = lastSearched;
+    }
+
+    public void setRecommendedSong(Song recommendedSong) {
+        this.recommendedSong = recommendedSong;
+    }
+
+    @Override
+    public Song getRecommendedSong() {
+        return recommendedSong;
+    }
+
+    public Playlist getRecommendedPlaylist() {
+        return recommendedPlaylist;
+    }
+
+    public void setRecommendedPlaylist(Playlist recommendedPlaylist) {
+        this.recommendedPlaylist = recommendedPlaylist;
+    }
+
+    public RecommendationType getRecommendationType() {
+        return recommedation;
+    }
+
+    public void setRecommendationType(RecommendationType recommedaion) {
+        this.recommedation = recommedaion;
+    }
+
+    public HashMap<ArtistUser, Integer> getListenedWhilePremium() {
+        return listenedWhilePremium;
+    }
+
+    public void setListenedWhilePremium(HashMap<ArtistUser, Integer> listenedWhilePremium) {
+        this.listenedWhilePremium = listenedWhilePremium;
     }
 }

@@ -45,4 +45,8 @@ public final class Enums { // diferite enumuri, le-am gurpat pe toate intr-un lo
     public enum PlayerSourceType {
         LIBRARY, PLAYLIST, PODCAST, ALBUM
     }
+
+    public enum RecommendationType {
+       NONE, SONG, PLAYLIST
+    }
 }

@@ -124,7 +124,7 @@ public class PrintPageVisitor implements Visitor {
             message.delete(message.length() - 2, message.length());
         }
 
-        message.append("\n]");
+        message.append("]");
         return message;
     }
 
@@ -138,6 +138,7 @@ public class PrintPageVisitor implements Visitor {
     @Override
     public StringBuilder visit(final HomePage page, final User user) {
         StringBuilder message;
+
         message = new StringBuilder("Liked songs:\n\t[");
         for (Song song : page.getFirst5LikedSongs()) {
             message.append(song.getName()).append(", ");
@@ -155,6 +156,25 @@ public class PrintPageVisitor implements Visitor {
         if (!page.getTop5LikedPlaylists().isEmpty()) {
             message.delete(message.length() - 2, message.length());
         }
+
+        message.append("]\n\nSong recommendations:\n\t[");
+        for (Song song : page.getSongRecommendations()) {
+            message.append(song.getName()).append(", ");
+        }
+
+        if (!page.getSongRecommendations().isEmpty()) {
+            message.delete(message.length() - 2, message.length());
+        }
+
+        message.append("]\n\nPlaylists recommendations:\n\t[");
+        for (Playlist playlist : page.getPlaylistRecommendations()) {
+            message.append(playlist.getName()).append(", ");
+        }
+
+        if (!page.getPlaylistRecommendations().isEmpty()) {
+            message.delete(message.length() - 2, message.length());
+        }
+
         message.append("]");
 
         return message;

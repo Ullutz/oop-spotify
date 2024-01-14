@@ -26,8 +26,8 @@ public class EndProgram implements Command {
 
             ObjectNode artistInfo = objectMapper.createObjectNode();
 
-            artistInfo.put("songRevenue", artist.getSongRevenue());
             artistInfo.put("merchRevenue", artist.getMerchRevenue());
+            artistInfo.put("songRevenue", artist.getSongRevenue());
             artistInfo.put("ranking", artist.getRanking());
             artistInfo.put("mostProfitableSong", artist.getMostProfitableSong());
 

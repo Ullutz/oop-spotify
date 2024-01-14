@@ -473,7 +473,6 @@ public final class Admin {
         }
 
         if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
-            System.out.println(timestamp);
             Episode episode = (Episode) user.getPlayer().getCurrentAudioFile();
             Podcast podcast = (Podcast) user.getPlayer().getSource().getAudioCollection();
             HostUser hostUser = (HostUser) getUser(podcast.getOwner());
@@ -489,11 +488,35 @@ public final class Admin {
     }
 
     /**
+     * calculates the revenue made by premium listeners
+     *
+     */
+    public void calculateSongsRevenuePremium() {
+        for (int i = 0; i < noNormalUsers; i++) {
+            NormalUser user = (NormalUser) users.get(i);
+
+            int listenedSongs = user.getListenedWhilePremium().values()
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .sum();
+
+            for (Map.Entry<ArtistUser, Integer> entry
+                    : user.getListenedWhilePremium().entrySet()) {
+                ArtistUser artist = entry.getKey();
+                int songs = entry.getValue();
+
+                artist.setSongRevenue(Math.round((artist.getSongRevenue() + (float) 1000000 / listenedSongs * songs) / 100) * 100);
+            }
+        }
+    }
+
+    /**
      * calculates the rankings for all the artists
      *
      * @return the list of sorted artists by the ranking and name
      */
     public List<User> setUpArtistRankings() {
+        calculateSongsRevenuePremium();
         List<User> sortedList = new ArrayList<>();
 
         for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {

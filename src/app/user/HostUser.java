@@ -378,6 +378,13 @@ public class HostUser extends User {
         return getUsername() + " is not an artist.";
     }
 
+    /**
+     * @return error message since a host can't remove events
+     */
+    public String updateRecommendations(final String type) {
+        return getUsername() + " is not a normal user.";
+    }
+
     @Override
     public void update(String name, String description) { }
 

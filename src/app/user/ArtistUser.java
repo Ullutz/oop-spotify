@@ -504,6 +504,13 @@ public class ArtistUser extends User {
         return getUsername() + " is not a normal user.";
     }
 
+    /**
+     * @return error message since a host can't remove events
+     */
+    public String updateRecommendations(final String type) {
+        return getUsername() + " is not a normal user.";
+    }
+
     @Override
     public void update(String name, String description) { }
 
@@ -599,5 +606,13 @@ public class ArtistUser extends User {
 
     public void setSoldMerch(boolean soldMerch) {
         this.soldMerch = soldMerch;
+    }
+
+    public HashMap<String, Integer> getTopFans() {
+        return topFans;
+    }
+
+    public void setTopFans(HashMap<String, Integer> topFans) {
+        this.topFans = topFans;
     }
 }

@@ -5,6 +5,7 @@ import app.pages.Page;
 import app.audio.Collections.*;
 import app.audio.Files.Song;
 import app.player.Player;
+import app.utils.Enums;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.EpisodeInput;
 import fileio.input.SongInput;
@@ -259,6 +260,26 @@ public abstract class User implements NotificationsObserver {
     public ArrayList<Notifications> getNotifications() {
         return null;
     }
+
+    /**
+     * goes to the next page of an user
+     *
+     * @return the message
+     */
+    public String nextPage() {
+        return username + " is not a normal user.";
+    }
+
+    /**
+     * goes to the previous page of an user
+     *
+     * @return the message
+     */
+    public String prevPage() {
+        return username + " is not a normal user.";
+    }
+
+    public abstract String updateRecommendations(final String type);
     public final String getUsername() {
         return username;
     }
@@ -297,5 +318,41 @@ public abstract class User implements NotificationsObserver {
 
     public final void setIndexOfCurrentPage(final int indexOfCurrentPage) {
         this.indexOfCurrentPage = indexOfCurrentPage;
+    }
+
+    /**
+     * gets the recommended song
+     *
+     * @return null since this is not a normal user
+     */
+    public Song getRecommendedSong() {
+        return null;
+    }
+
+    /**
+     * gets the recommended playlist
+     *
+     * @return null since this is not a normal user
+     */
+    public Playlist getRecommendedPlaylist() {
+        return null;
+    }
+
+    /**
+     * gets the recommendation type
+     *
+     * @return null since this is not a normal user
+     */
+    public Enums.RecommendationType getRecommendationType() {
+        return null;
+    }
+
+    /**
+     * loads the recommendation
+     *
+     * @return null since this is not a normal user
+     */
+    public String loadRecommendations() {
+        return null;
     }
 }

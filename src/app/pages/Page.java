@@ -6,7 +6,6 @@ import app.user.User;
 
 public interface Page extends Visitable {
 
-
     /**
      * accepts the visitor
      *
@@ -30,4 +29,14 @@ public interface Page extends Visitable {
      * @param username the username
      */
     void setOwner(String username);
+
+    /**
+     * method to be overwritten by the implementations of
+     * this interface
+     *
+     * @return null
+     */
+    default String getType() {
+        return null;
+    }
 }

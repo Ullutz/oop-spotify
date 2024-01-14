@@ -9,7 +9,10 @@ import app.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static app.utils.Enums.ARTIST_PAGE;
+
 public class ArtistPage implements Page {
+    private final int TYPE = ARTIST_PAGE;
     private String owner;
     private List<Album> albums = new ArrayList<>();
     private List<Merch> merches = new ArrayList<>();
@@ -50,5 +53,9 @@ public class ArtistPage implements Page {
 
     public final void setEvents(final List<Event> events) {
         this.events = events;
+    }
+
+    public final String getType() {
+        return "Artist";
     }
 }
