@@ -187,17 +187,6 @@ public class NormalUser extends User {
 
         player.pause();
 
-        if (premiumSubscription) {
-            if (!player.getSource().getType().equals(PlayerSourceType.PODCAST)) {
-                ArtistUser artist = (ArtistUser) Admin.getInstance()
-                        .getUser(((Song) player.getCurrentAudioFile()).getArtist());
-                if (listenedWhilePremium.containsKey(artist)) {
-                    listenedWhilePremium.put(artist, listenedWhilePremium.get(artist) + 1);
-                } else {
-                    listenedWhilePremium.put(artist, 1);
-                }
-            }
-        }
         Admin.getInstance().updateUserWrapped(this);
         return "Playback loaded successfully.";
     }
@@ -1026,7 +1015,7 @@ public class NormalUser extends User {
 
         premiumSubscription = false;
 
-        int listenedSongs = listenedWhilePremium.values()
+        double listenedSongs = listenedWhilePremium.values()
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
@@ -1034,9 +1023,34 @@ public class NormalUser extends User {
         for (Map.Entry<ArtistUser, Integer> entry
                 : listenedWhilePremium.entrySet()) {
             ArtistUser artist = entry.getKey();
-            int songs = entry.getValue();
+            double songs = entry.getValue();
 
-            artist.setSongRevenue(Math.round((artist.getSongRevenue() + (float) 1000000 / listenedSongs * songs) / 100) * 100);
+            double value = artist.getSongRevenue() + 1000000.00 / listenedSongs * songs;
+            artist.setSongRevenue(Math.round(value * 100.00) / 100.00);
+        }
+
+        for (int i = Admin.getInstance().getNoNormalUsers();
+                i < Admin.getInstance().getNoNormalUsers()
+                        + Admin.getInstance().getNoArtistUsers(); i++) {
+            ArtistUser artistUser = (ArtistUser) Admin.getInstance().getUsers().get(i);
+
+            double listenedSongsArtist = artistUser.getSongListenedByPremium().values()
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .sum();
+
+            for (Map.Entry<Song, Integer> entry
+                    : artistUser.getSongListenedByPremium().entrySet()) {
+                Song song = entry.getKey();
+                double listens = entry.getValue();
+
+                double value = song.getProfit() + 1000000.00 / listenedSongs * listens;
+                value = Math.round(value * 100.00) / 100.00;
+                song.setProfit(value);
+                artistUser.getSong(song.getName()).setProfit(value);
+            }
+
+            artistUser.getSongListenedByPremium().clear();
         }
 
         listenedWhilePremium.clear();
@@ -1313,6 +1327,11 @@ public class NormalUser extends User {
         return "The recommendations for user " + getUsername() + " have been updated successfully.";
     }
 
+    /**
+     * loads the last recommendation
+     *
+     * @return a message
+     */
     public String loadRecommendations() {
         if (recommedation.equals(RecommendationType.NONE)) {
             return "No recommendations available.";
@@ -1336,6 +1355,12 @@ public class NormalUser extends User {
 
         return "Playback loaded successfully.";
     }
+
+    @Override
+    public String getWrappedErrorMessage() {
+        return "No data to show for user " + getUsername() + ".";
+    }
+
     public final boolean isConnectionStatus() {
         return connectionStatus;
     }
@@ -1416,5 +1441,13 @@ public class NormalUser extends User {
 
     public void setListenedWhilePremium(HashMap<ArtistUser, Integer> listenedWhilePremium) {
         this.listenedWhilePremium = listenedWhilePremium;
+    }
+
+    public boolean isPremiumSubscription() {
+        return premiumSubscription;
+    }
+
+    public void setPremiumSubscription(boolean premiumSubscription) {
+        this.premiumSubscription = premiumSubscription;
     }
 }

@@ -455,8 +455,7 @@ public final class Admin {
             return;
         }
 
-        if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.LIBRARY)
-            ||  user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.ALBUM)) {
+        if (!user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
             Song song = (Song) user.getPlayer().getCurrentAudioFile();
             ArtistUser artistUser = (ArtistUser) getUser(song.getArtist());
 
@@ -470,6 +469,22 @@ public final class Admin {
             user.incrementGenre(song.getGenre());
             user.incrementArtist(song.getArtist());
             user.incrementAlbums(song.getAlbum());
+
+            if (user.isPremiumSubscription()) {
+                if (user.getListenedWhilePremium().containsKey(artistUser)) {
+                    user.getListenedWhilePremium().put(artistUser,
+                            user.getListenedWhilePremium().get(artistUser) + 1);
+                } else {
+                    user.getListenedWhilePremium().put(artistUser, 1);
+                }
+
+                if (artistUser.getSongListenedByPremium().containsKey(song)) {
+                    artistUser.getSongListenedByPremium().put(song,
+                            artistUser.getSongListenedByPremium().get(song) + 1);
+                } else {
+                    artistUser.getSongListenedByPremium().put(song, 1);
+                }
+            }
         }
 
         if (user.getPlayer().getSource().getType().equals(Enums.PlayerSourceType.PODCAST)) {
@@ -487,6 +502,28 @@ public final class Admin {
         }
     }
 
+    public void getMostProfitableSong() {
+        for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
+            ArtistUser artistUser = (ArtistUser) users.get(i);
+            Song mostProfitableSong = null;
+            double maxProfit = -1;
+
+            for (Album album : artistUser.getAlbums()) {
+                for (Song song : album.getSongs()) {
+                    System.out.println(song.getName() + " " + song.getProfit());
+                    if (song.getProfit() > maxProfit && song.getProfit() > 0) {
+                        maxProfit = song.getProfit();
+                        mostProfitableSong = song;
+                    }
+                }
+            }
+
+            if (mostProfitableSong != null) {
+                artistUser.setMostProfitableSong(mostProfitableSong.getName());
+            }
+        }
+    }
+
     /**
      * calculates the revenue made by premium listeners
      *
@@ -495,7 +532,7 @@ public final class Admin {
         for (int i = 0; i < noNormalUsers; i++) {
             NormalUser user = (NormalUser) users.get(i);
 
-            int listenedSongs = user.getListenedWhilePremium().values()
+            double listenedSongs = user.getListenedWhilePremium().values()
                     .stream()
                     .mapToInt(Integer::intValue)
                     .sum();
@@ -503,9 +540,30 @@ public final class Admin {
             for (Map.Entry<ArtistUser, Integer> entry
                     : user.getListenedWhilePremium().entrySet()) {
                 ArtistUser artist = entry.getKey();
-                int songs = entry.getValue();
+                double songs = entry.getValue();
 
-                artist.setSongRevenue(Math.round((artist.getSongRevenue() + (float) 1000000 / listenedSongs * songs) / 100) * 100);
+                double value = artist.getSongRevenue() + 1000000.00 / listenedSongs * songs;
+                artist.setSongRevenue(Math.round(value * 100.00) / 100.00);
+            }
+        }
+
+        for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
+            ArtistUser artistUser = (ArtistUser) users.get(i);
+
+            double listenedSongs = artistUser.getSongListenedByPremium().values()
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .sum();
+
+            for (Map.Entry<Song, Integer> entry
+                    : artistUser.getSongListenedByPremium().entrySet()) {
+                Song song = entry.getKey();
+                double listens = entry.getValue();
+
+                double value = song.getProfit() + 1000000.00 / listenedSongs * listens;
+                value = Math.round(value * 100.00) / 100.00;
+                song.setProfit(value);
+                artistUser.getSong(song.getName()).setProfit(value);
             }
         }
     }
@@ -517,6 +575,7 @@ public final class Admin {
      */
     public List<User> setUpArtistRankings() {
         calculateSongsRevenuePremium();
+        getMostProfitableSong();
         List<User> sortedList = new ArrayList<>();
 
         for (int i = noNormalUsers; i < noNormalUsers + noArtistUsers; i++) {
@@ -529,10 +588,10 @@ public final class Admin {
         sortedList.sort(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {
-                float revenue1 = ((ArtistUser) o1).getSongRevenue() +
+                double revenue1 = ((ArtistUser) o1).getSongRevenue() +
                         ((ArtistUser) o1).getMerchRevenue();
 
-                float revenue2 = ((ArtistUser) o2).getSongRevenue() +
+                double revenue2 = ((ArtistUser) o2).getSongRevenue() +
                         ((ArtistUser) o2).getMerchRevenue();
 
                 if (revenue2 - revenue1 > 0)

@@ -76,6 +76,7 @@ public final class Main {
         LibraryInput library = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
                         + "library/library.json"),
                 LibraryInput.class);
+        System.out.println("\n\n" + filePath1 + "\n\n");
         CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
                         + "test04_etapa3_monetization_premium.json"),
                 CommandInput[].class);

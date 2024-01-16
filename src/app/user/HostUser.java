@@ -386,6 +386,11 @@ public class HostUser extends User {
     }
 
     @Override
+    public String getWrappedErrorMessage() {
+        return "No data to show for host " + getUsername() + ".";
+    }
+
+    @Override
     public void update(String name, String description) { }
 
     @Override

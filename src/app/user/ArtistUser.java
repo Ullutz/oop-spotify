@@ -25,13 +25,14 @@ public class ArtistUser extends User {
     private HashMap<String, Integer> topSongs;
     private HashMap<String, Integer> topFans;
     private Set<String> listeners;
-    private float songRevenue;
+    private double songRevenue;
     private float merchRevenue;
     private int ranking;
     private String mostProfitableSong;
     private boolean listened;
     private ArrayList<User> subscribers;
     private boolean soldMerch;
+    private HashMap<Song, Integer> songListenedByPremium;
 
     public ArtistUser(final String username, final int age, final String city) {
         super(username, age, city);
@@ -47,6 +48,7 @@ public class ArtistUser extends User {
         listened = false;
         subscribers = new ArrayList<>();
         soldMerch = false;
+        songListenedByPremium = new HashMap<>();
     }
 
     /**
@@ -137,8 +139,10 @@ public class ArtistUser extends User {
                     getUsers().get(i)).getPlayer();
 
             if (player.getSource() != null) {
-                if (player.getSource().getAudioCollection().equals(album)) {
-                    return getUsername() + " can't delete this album.";
+                if (player.getSource().getAudioCollection() != null) {
+                    if (player.getSource().getAudioCollection().equals(album)) {
+                        return getUsername() + " can't delete this album.";
+                    }
                 }
             }
         }
@@ -512,6 +516,11 @@ public class ArtistUser extends User {
     }
 
     @Override
+    public String getWrappedErrorMessage() {
+        return "No data to show for artist " + getUsername() + ".";
+    }
+
+    @Override
     public void update(String name, String description) { }
 
     @Override
@@ -552,11 +561,11 @@ public class ArtistUser extends User {
         this.totalLikes = totalLikes;
     }
 
-    public float getSongRevenue() {
+    public double getSongRevenue() {
         return songRevenue;
     }
 
-    public void setSongRevenue(float songRevenue) {
+    public void setSongRevenue(double songRevenue) {
         this.songRevenue = songRevenue;
     }
 
@@ -614,5 +623,24 @@ public class ArtistUser extends User {
 
     public void setTopFans(HashMap<String, Integer> topFans) {
         this.topFans = topFans;
+    }
+
+    public HashMap<Song, Integer> getSongListenedByPremium() {
+        return songListenedByPremium;
+    }
+
+    public void setSongListenedByPremium(HashMap<Song, Integer> songListenedByPremium) {
+        this.songListenedByPremium = songListenedByPremium;
+    }
+
+    public Song getSong(final String name) {
+        for (Album album : albums) {
+            for (Song song : album.getSongs()) {
+                if (song.getName().equals(name))
+                    return song;
+            }
+        }
+
+        return null;
     }
 }

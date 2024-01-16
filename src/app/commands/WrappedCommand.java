@@ -21,7 +21,7 @@ public class WrappedCommand implements Command {
         obj.put("timestamp", commandInput.getTimestamp());
 
         if (user == null) {
-            obj.put("message", "No data to show for user " + commandInput.getUsername() + ".");
+            obj.put("message", "The username " + commandInput.getUsername() + " doesn't exist.");
             return obj;
         }
 
@@ -30,7 +30,7 @@ public class WrappedCommand implements Command {
         result = user.getWrapped();
 
         if (result == null) {
-            obj.put("message", "No data to show for user " + commandInput.getUsername() + ".");
+            obj.put("message", user.getWrappedErrorMessage());
             return obj;
         }
 

@@ -355,4 +355,11 @@ public abstract class User implements NotificationsObserver {
     public String loadRecommendations() {
         return null;
     }
+
+    /**
+     * gets an error message
+     *
+     * @return error message for each individual user
+     */
+    public abstract String getWrappedErrorMessage();
 }
